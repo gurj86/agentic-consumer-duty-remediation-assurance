@@ -13,7 +13,7 @@ main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid
 .notice{background:#fff7e8;border:1px solid #efcc88;color:#6b4f00}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.step{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfcfe}.step strong{display:block;font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
 label{display:block;font-size:12px;font-weight:800;margin:13px 0 5px}textarea{width:100%;min-height:90px;border:1px solid #cad4e2;border-radius:10px;padding:11px;font:inherit;resize:vertical}
 .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
-.results{display:none}.results.show{display:block}.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.finding p{margin:5px 0;color:#475467}
+.results{display:none}.results.show{display:block}.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.finding p{margin:5px 0;color:#475467}.finding a{display:inline-block;margin-top:7px;color:var(--blue);font-weight:800;text-decoration:none}.finding a:hover{text-decoration:underline}
 .badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;background:#eef3ff;color:#234baf}.human{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}
 .decision-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.decision-row button.active{background:var(--navy);color:#fff}
 .status{font-size:13px;color:var(--muted);margin-top:8px}
@@ -97,7 +97,7 @@ document.getElementById("run").onclick=async()=>{
   document.getElementById("recommendation").textContent=data.recommendation;
   document.getElementById("findingCount").textContent=data.findings.length+" findings";
   document.getElementById("summary").textContent=data.case_summary+" "+data.rationale;
-  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(f.fca_reference?'<p><b>FCA reference to verify:</b> '+esc(f.fca_reference)+'</p>':'')+'</div>').join("");
+  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(f.fca_reference?'<p><b>FCA reference to verify:</b> '+esc(f.fca_reference)+'</p>':'')+(f.fca_url?'<a href="'+esc(f.fca_url)+'" target="_blank" rel="noreferrer">Open official FCA source →</a>':'')+'</div>').join("");
   document.getElementById("humanNote").textContent=data.human_review_note;
   document.getElementById("results").classList.add("show");
   status.textContent="Agentic review complete. Human decision still required.";
