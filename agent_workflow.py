@@ -4,6 +4,8 @@ from typing import Literal
 from agents import Agent, Runner
 from pydantic import BaseModel, Field
 
+MODEL = "gpt-6-luna"
+
 
 class AssuranceFinding(BaseModel):
     area: str
@@ -33,6 +35,7 @@ Where information is missing, say that it is missing. Final judgement is human-l
 
 affordability_agent = Agent(
     name="Affordability Specialist",
+    model=MODEL,
     instructions=BASE_BOUNDARY + """
 Review only affordability and financial-difficulty evidence.
 Ask whether the proposed arrangement appears evidenced as sustainable,
@@ -43,6 +46,7 @@ temporary or changing circumstances have been reflected. Return concise findings
 
 vulnerability_agent = Agent(
     name="Vulnerability and Support Specialist",
+    model=MODEL,
     instructions=BASE_BOUNDARY + """
 Review vulnerability, support needs and communication preferences.
 Check whether identified needs appear reflected in the actions taken, whether
@@ -53,6 +57,7 @@ Return concise findings and clearly separate fact from inference.
 
 evidence_agent = Agent(
     name="Evidence Challenge Specialist",
+    model=MODEL,
     instructions=BASE_BOUNDARY + """
 Challenge the quality of the case evidence and agent rationale.
 Look for contradictions, unsupported conclusions, generic reasoning, missing
@@ -63,6 +68,7 @@ Return concise assurance findings and suggested reviewer actions.
 
 regulatory_agent = Agent(
     name="Regulatory Reference Specialist",
+    model=MODEL,
     instructions=BASE_BOUNDARY + """
 Identify relevant public FCA themes or Handbook areas that a human reviewer may
 want to check, especially Consumer Duty, CONC arrears/default/recovery and FCA
@@ -74,6 +80,7 @@ verified by the reviewer.
 
 lead_agent = Agent(
     name="Lead Consumer Duty Assurance Agent",
+    model=MODEL,
     instructions=BASE_BOUNDARY + """
 You are the lead assurance agent. Review a completed collections/recoveries case.
 
