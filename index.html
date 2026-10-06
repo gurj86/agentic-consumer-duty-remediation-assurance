@@ -75,7 +75,7 @@ const example={
  actions:"A 6-month repayment plan of £120 per month was agreed. Standard outbound contact remains in place.",
  rationale:"The customer accepted the reduced payment arrangement and confirmed they were happy with the plan. The payment is lower than the contractual amount, so I believe the outcome is fair and appropriate."
 };
-function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v}
+function esc(v){return String(v??"").replace(/[&<>"\']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[m]))}\nfunction loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v}
 document.getElementById("reset").onclick=loadExample;
 document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
@@ -96,7 +96,7 @@ document.getElementById("run").onclick=async()=>{
   document.getElementById("recommendation").textContent=data.recommendation;
   document.getElementById("findingCount").textContent=data.findings.length+" findings";
   document.getElementById("summary").textContent=data.case_summary+" "+data.rationale;
-  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+f.severity+'"><strong>'+f.area+' · '+f.severity.toUpperCase()+'</strong><p><b>Issue:</b> '+f.issue+'</p><p><b>Why it matters:</b> '+f.why_it_matters+'</p><p><b>Reviewer action:</b> '+f.reviewer_action+'</p>'+(f.fca_reference?'<p><b>FCA reference to verify:</b> '+f.fca_reference+'</p>':'')+'</div>').join("");
+  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(f.fca_reference?'<p><b>FCA reference to verify:</b> '+esc(f.fca_reference)+'</p>':'')+'</div>').join("");
   document.getElementById("humanNote").textContent=data.human_review_note;
   document.getElementById("results").classList.add("show");
   status.textContent="Agentic review complete. Human decision still required.";
