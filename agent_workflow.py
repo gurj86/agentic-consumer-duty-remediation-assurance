@@ -14,6 +14,7 @@ class AssuranceFinding(BaseModel):
     why_it_matters: str
     reviewer_action: str
     fca_reference: str | None = None
+    fca_url: str | None = None
 
 
 class AssuranceResult(BaseModel):
@@ -70,11 +71,34 @@ regulatory_agent = Agent(
     name="Regulatory Reference Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Identify relevant public FCA themes or Handbook areas that a human reviewer may
-want to check, especially Consumer Duty, CONC arrears/default/recovery and FCA
-vulnerability guidance. Do not invent rule numbers. If you are not confident in
-a precise rule reference, give the broader FCA source/theme and say it should be
-verified by the reviewer.
+Identify relevant public FCA rules or guidance for the case and give the most
+specific reference you can support. Prefer the approved source list below.
+Do not invent rule numbers, quotes or URLs. If the facts do not support a precise
+provision, use the broader section or guidance and say it requires human verification.
+
+APPROVED FCA REFERENCE MAP:
+- CONC 7.3.4 / 7.3.4B — forbearance, due consideration and individual circumstances
+  https://handbook.fca.org.uk/handbook/conc7/conc7s3
+- CONC 7.3.5 / 7.3.5I — examples of forbearance and keeping support appropriate
+  https://handbook.fca.org.uk/handbook/conc7/conc7s3
+- CONC 7.3.7A — free money guidance / debt-advice support where appropriate
+  https://handbook.fca.org.uk/handbook/conc7/conc7s3
+- CONC 7.3.13A — clear communications taking account of individual circumstances
+  https://handbook.fca.org.uk/handbook/conc7/conc7s3
+- CONC 7.2.1 / 7.2.2A — policies for fair treatment of vulnerable customers and FG21/1
+  https://handbook.fca.org.uk/handbook/conc7/conc7s2
+- FG21/1 — FCA Guidance for firms on the fair treatment of vulnerable customers
+  https://www.fca.org.uk/publication/finalised-guidance/fg21-1.pdf
+- PRIN 2A.2.8 — Consumer Duty: avoid causing foreseeable harm
+  https://handbook.fca.org.uk/handbook/prin2a
+- PRIN 2A.6 — Consumer Duty: consumer support outcome
+  https://handbook.fca.org.uk/handbook/prin2a/prin2as6
+
+When you provide a regulatory point to the lead agent, include BOTH:
+1. the exact reference label; and
+2. the matching URL from this approved list.
+
+Treat these as references for a human reviewer to verify, not as proof of breach.
 """,
 )
 
@@ -96,6 +120,10 @@ outcome risks. Do not treat a specialist concern as a proven breach. Recommend:
 
 Keep the output practical for a second-line/QA reviewer and make clear that the
 human reviewer owns the final decision.
+
+For each finding, populate fca_reference and fca_url when a relevant FCA source
+has been identified by the regulatory specialist. Only use URLs supplied by that
+specialist from the approved FCA reference map. Do not fabricate URLs.
 """,
     tools=[
         affordability_agent.as_tool(
