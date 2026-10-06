@@ -75,7 +75,8 @@ const example={
  actions:"A 6-month repayment plan of £120 per month was agreed. Standard outbound contact remains in place.",
  rationale:"The customer accepted the reduced payment arrangement and confirmed they were happy with the plan. The payment is lower than the contractual amount, so I believe the outcome is fair and appropriate."
 };
-function esc(v){return String(v??"").replace(/[&<>"\']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[m]))}\nfunction loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v}
+function esc(v){return String(v??"").replace(/[&<>"\']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[m]))}
+function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v}
 document.getElementById("reset").onclick=loadExample;
 document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
