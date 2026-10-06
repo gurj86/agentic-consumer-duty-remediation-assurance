@@ -37,6 +37,10 @@ It does **not**:
 
 The agent output is a review aid. The human reviewer remains accountable for the final outcome.
 
+## Model choice and cost
+
+The prototype explicitly uses **GPT-6 Luna** for the lead and specialist agents. It is OpenAI's most cost-efficient current model for focused, high-volume tasks and supports function calling and structured outputs, which fit this workflow well. This keeps testing costs low without changing the multi-agent design.
+
 ## Run locally
 
 Requires Python 3.10+ and an OpenAI API key.
