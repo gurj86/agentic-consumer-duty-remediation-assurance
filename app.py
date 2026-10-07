@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from agent_workflow import run_assurance as run_consumer_duty_assurance
 from motor_finance_workflow import run_assurance as run_motor_finance_assurance
+from remediation_workflow import run_assurance as run_remediation_assurance
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
@@ -33,6 +34,15 @@ class MotorFinanceCaseInput(BaseModel):
     disclosure_customer_evidence: str
     proposed_outcome: str
     reviewer_rationale: str
+
+
+class RemediationProgrammeInput(BaseModel):
+    customer_harm: str
+    population_identification: str
+    data_lineage: str
+    redress_methodology: str
+    qa_outcome_testing: str
+    governance_closure: str
 
 
 def _client_ip(request: Request) -> str:
@@ -91,12 +101,18 @@ async def motor_finance_page():
         return f.read()
 
 
+@app.get("/remediation", response_class=HTMLResponse)
+async def remediation_page():
+    with open("remediation.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
 @app.get("/health")
 async def health():
     return {
         "status": "ok",
         "agentic_mode": bool(os.getenv("OPENAI_API_KEY")),
-        "demos": ["consumer-duty", "motor-finance"],
+        "demos": ["consumer-duty", "motor-finance", "remediation"],
     }
 
 
@@ -121,6 +137,20 @@ async def motor_finance_review(case: MotorFinanceCaseInput, request: Request):
     _validate_demo_input(case)
     try:
         result = await run_motor_finance_assurance(case.model_dump())
+        return result.model_dump()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Agentic review failed: {exc}") from exc
+
+
+@app.post("/api/remediation/review")
+async def remediation_review(case: RemediationProgrammeInput, request: Request):
+    _require_api_key()
+    _check_rate_limit(request)
+    _validate_demo_input(case)
+    try:
+        result = await run_remediation_assurance(case.model_dump())
         return result.model_dump()
     except HTTPException:
         raise
