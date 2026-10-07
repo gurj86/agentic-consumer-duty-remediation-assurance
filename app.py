@@ -33,6 +33,22 @@ MAX_EXTRACTED_CHARS_PER_FILE = 18000
 ALLOWED_UPLOAD_EXTENSIONS = {".pdf", ".docx", ".txt", ".csv", ".xlsx"}
 _requests_by_ip: dict[str, deque[float]] = defaultdict(deque)
 
+# Lightweight portfolio usage counters. These are intentionally in-memory:
+# they reset whenever Render restarts or redeploys the service.
+_service_started_at = time.time()
+_demo_usage = {
+    "consumer-duty": {"successful_runs": 0, "failed_runs": 0},
+    "motor-finance": {"successful_runs": 0, "failed_runs": 0},
+    "remediation": {"successful_runs": 0, "failed_runs": 0},
+}
+
+
+def _record_demo_run(demo: str, success: bool) -> None:
+    if demo not in _demo_usage:
+        return
+    key = "successful_runs" if success else "failed_runs"
+    _demo_usage[demo][key] += 1
+
 
 class ConsumerDutyCaseInput(BaseModel):
     customer_circumstances: str
@@ -481,6 +497,20 @@ async def remediation_page():
         return f.read()
 
 
+@app.get("/api/demo-usage")
+async def demo_usage():
+    total_successful = sum(v["successful_runs"] for v in _demo_usage.values())
+    total_failed = sum(v["failed_runs"] for v in _demo_usage.values())
+    return {
+        "api_configured": bool(os.getenv("OPENAI_API_KEY")),
+        "service_started_at_unix": int(_service_started_at),
+        "note": "Counters reset when the Render service restarts or redeploys.",
+        "total_successful_runs": total_successful,
+        "total_failed_runs": total_failed,
+        "demos": _demo_usage,
+    }
+
+
 @app.get("/health")
 async def health():
     return {
@@ -500,10 +530,13 @@ async def consumer_duty_review(case: ConsumerDutyCaseInput, request: Request):
     _validate_demo_input(case)
     try:
         result = await run_consumer_duty_assurance(case.model_dump())
+        _record_demo_run("consumer-duty", True)
         return result.model_dump()
     except HTTPException:
+        _record_demo_run("consumer-duty", False)
         raise
     except Exception as exc:
+        _record_demo_run("consumer-duty", False)
         raise HTTPException(status_code=500, detail=f"Agentic review failed: {exc}") from exc
 
 
@@ -514,10 +547,13 @@ async def motor_finance_review(case: MotorFinanceCaseInput, request: Request):
     _validate_demo_input(case)
     try:
         result = await run_motor_finance_assurance(case.model_dump())
+        _record_demo_run("motor-finance", True)
         return result.model_dump()
     except HTTPException:
+        _record_demo_run("motor-finance", False)
         raise
     except Exception as exc:
+        _record_demo_run("motor-finance", False)
         raise HTTPException(status_code=500, detail=f"Agentic review failed: {exc}") from exc
 
 
@@ -546,10 +582,13 @@ async def remediation_review(case: RemediationProgrammeInput, request: Request):
     _validate_demo_input(case)
     try:
         result = await run_remediation_assurance(case.model_dump())
+        _record_demo_run("remediation", True)
         return result.model_dump()
     except HTTPException:
+        _record_demo_run("remediation", False)
         raise
     except Exception as exc:
+        _record_demo_run("remediation", False)
         raise HTTPException(status_code=500, detail=f"Agentic review failed: {exc}") from exc
 
 
