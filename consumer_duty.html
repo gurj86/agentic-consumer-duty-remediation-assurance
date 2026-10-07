@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agentic AI Consumer Duty & Remediation Assurance</title>
+<style>
+:root{--navy:#12203d;--blue:#315fd5;--bg:#f4f7fb;--card:#fff;--line:#dce3ee;--ink:#172033;--muted:#667085;--amber:#a15c00;--red:#b42318;--green:#16794b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(120deg,#0e1931,#203d76);color:#fff;padding:28px 0 46px}.wrap{max-width:1120px;margin:auto;padding:0 22px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#b9ccff}h1{font-size:clamp(30px,5vw,48px);line-height:1.06;margin:7px 0 10px}.lead{max-width:800px;color:#dce7ff;font-size:17px}
+main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 10px 28px rgba(16,24,40,.07);margin-bottom:15px}
+.notice{background:#fff7e8;border:1px solid #efcc88;color:#6b4f00}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.step{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfcfe}.step strong{display:block;font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+label{display:block;font-size:12px;font-weight:800;margin:13px 0 5px}textarea{width:100%;min-height:90px;border:1px solid #cad4e2;border-radius:10px;padding:11px;font:inherit;resize:vertical}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.results{display:none}.results.show{display:block}.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.finding p{margin:5px 0;color:#475467}.finding a{display:inline-block;margin-top:7px;color:var(--blue);font-weight:800;text-decoration:none}.finding a:hover{text-decoration:underline}
+.badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;background:#eef3ff;color:#234baf}.human{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}
+.decision-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.decision-row button.active{background:var(--navy);color:#fff}
+.status{font-size:13px;color:var(--muted);margin-top:8px}
+@media(max-width:780px){.flow{grid-template-columns:1fr}}
+</style>
+</head>
+<body><div style="max-width:1120px;margin:14px auto 0;padding:0 22px"><a href="/" style="color:#315fd5;font-weight:800;text-decoration:none">← Agentic Assurance Portfolio</a></div>
+<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Agentic AI Consumer Duty & Remediation Assurance</h1><p class="lead">A multi-agent Collections & Recoveries assurance workflow that coordinates specialist reviews, challenges case evidence and routes the result to a human reviewer.</p></div></header>
+<main class="wrap">
+  <div class="card notice"><strong>Fictional data only.</strong> This prototype does not make legal, regulatory or customer redress decisions. The human reviewer owns the final outcome.<br><strong>Privacy:</strong> Use fictional or fully anonymised information only. Do not enter real customer data, personal information or confidential firm material.</div>
+
+  <section class="card">
+    <div class="eyebrow" style="color:#61708a">Agentic workflow</div>
+    <h2>How the agents work together</h2>
+    <div class="flow">
+      <div class="step"><strong>1 · Lead Agent</strong><span>Reads the case and decides which specialists to call.</span></div>
+      <div class="step"><strong>2 · Affordability</strong><span>Checks financial-difficulty and sustainability evidence.</span></div>
+      <div class="step"><strong>3 · Vulnerability</strong><span>Checks support needs and communication treatment.</span></div>
+      <div class="step"><strong>4 · Evidence / FCA</strong><span>Challenges rationale and identifies regulatory references.</span></div>
+      <div class="step"><strong>5 · Human Review</strong><span>Reviewer decides Pass, Further Work or Escalate.</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Fictional case</h2>
+    <label>Customer circumstances</label>
+    <textarea id="circumstances">Customer lost their job 6 weeks ago and is receiving Universal Credit. They have missed two payments, have no confirmed return-to-work date and say their current income is tight.</textarea>
+    <label>Call / interaction notes</label>
+    <textarea id="interaction">Customer became upset during the call and explained they are grieving a recent bereavement and are finding repeated calls difficult. They asked to be contacted by email only where possible and said they did not feel ready to make longer-term financial decisions during the call.</textarea>
+    <label>Vulnerability / support needs</label>
+    <textarea id="vulnerability">Recent bereavement, emotional distress, temporary financial difficulty and a stated preference for email contact.</textarea>
+    <label>Actions taken</label>
+    <textarea id="actions">A 6-month repayment plan of £120 per month was agreed without a recorded income-and-expenditure assessment. Standard outbound telephone contact remains in place despite the customer's email preference. No wider support or debt-advice signposting is recorded.</textarea>
+    <label>Agent final rationale</label>
+    <textarea id="rationale">The customer accepted the reduced payment arrangement, so I consider affordability and fair treatment sufficiently evidenced. As the customer agreed to the plan, I do not think further vulnerability, communication-preference or support checks are required.</textarea>
+    <div class="actions"><button id="reset">Load example</button><button class="primary" id="run">Run Agentic Assurance Review</button></div>
+    <div class="status" id="status">Requires a locally configured OPENAI_API_KEY.</div>
+  </section>
+
+  <section class="card results" id="results">
+    <div class="eyebrow" style="color:#61708a">Lead agent output</div>
+    <h2 id="recommendation">—</h2>
+    <span class="badge" id="findingCount">—</span>
+    <p id="summary"></p>
+    <div id="findings"></div>
+    <div class="human">
+      <strong>Human reviewer decision</strong>
+      <p id="humanNote">Agent output is advisory only.</p>
+      <div class="decision-row"><button data-decision="Pass">Pass</button><button data-decision="Further Work">Further Work</button><button data-decision="Escalate">Escalate</button></div>
+      <div class="status" id="humanDecision">No human decision recorded.</div>
+    </div>
+  </section>
+</main>
+<script>
+const example={
+ circumstances:"Customer lost their job 6 weeks ago and is receiving Universal Credit. They have missed two payments, have no confirmed return-to-work date and say their current income is tight.",
+ interaction:"Customer became upset during the call and explained they are grieving a recent bereavement and are finding repeated calls difficult. They asked to be contacted by email only where possible and said they did not feel ready to make longer-term financial decisions during the call.",
+ vulnerability:"Recent bereavement, emotional distress, temporary financial difficulty and a stated preference for email contact.",
+ actions:"A 6-month repayment plan of £120 per month was agreed without a recorded income-and-expenditure assessment. Standard outbound telephone contact remains in place despite the customer's email preference. No wider support or debt-advice signposting is recorded.",
+ rationale:"The customer accepted the reduced payment arrangement, so I consider affordability and fair treatment sufficiently evidenced. As the customer agreed to the plan, I do not think further vulnerability, communication-preference or support checks are required."
+};
+function esc(v){return String(v??"").replace(/[&<>"\']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[m]))}
+function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v}
+document.getElementById("reset").onclick=loadExample;
+document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ document.getElementById("humanDecision").textContent="Human decision recorded: "+b.dataset.decision+" (demo only).";
+});
+document.getElementById("run").onclick=async()=>{
+ const run=document.getElementById("run"),status=document.getElementById("status");run.disabled=true;status.textContent="Lead agent is coordinating specialist reviews…";
+ const body={
+  customer_circumstances:document.getElementById("circumstances").value,
+  interaction_notes:document.getElementById("interaction").value,
+  vulnerability_support_needs:document.getElementById("vulnerability").value,
+  actions_taken:document.getElementById("actions").value,
+  agent_rationale:document.getElementById("rationale").value
+ };
+ try{
+  const res=await fetch("/api/consumer-duty/review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const data=await res.json(); if(!res.ok)throw new Error(data.detail||"Review failed");
+  document.getElementById("recommendation").textContent=data.recommendation;
+  document.getElementById("findingCount").textContent=data.findings.length+" findings";
+  document.getElementById("summary").textContent=data.case_summary+" "+data.rationale;
+  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(f.fca_reference?'<p><b>FCA reference to verify:</b> '+esc(f.fca_reference)+'</p>':'')+(f.fca_url?'<a href="'+esc(f.fca_url)+'" target="_blank" rel="noreferrer">Open official FCA source →</a>':'')+(f.fos_example?'<p><b>FOS illustrative example:</b> '+esc(f.fos_example)+' <span style="color:#667085">(fact-specific, not binding precedent)</span></p>':'')+(f.fos_url?'<a href="'+esc(f.fos_url)+'" target="_blank" rel="noreferrer">Open published FOS example →</a>':'')+'</div>').join("");
+  document.getElementById("humanNote").textContent=data.human_review_note;
+  document.getElementById("results").classList.add("show");
+  status.textContent="Agentic review complete. Human decision still required.";
+ }catch(e){status.textContent=e.message}
+ finally{run.disabled=false}
+};
+</script>
+</body>
+</html>
