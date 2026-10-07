@@ -42,6 +42,102 @@ _demo_usage = {
     "remediation": {"successful_runs": 0, "failed_runs": 0},
 }
 
+WORKFLOW_VERSION = "1.1"
+GROUNDING_VERSION = "2026-10"
+EVALUATION_HARNESS_VERSION = "1.0"
+_evaluation_history: deque[dict] = deque(maxlen=20)
+
+BENCHMARKS = {
+    "cd-vulnerability-gap": {
+        "name": "Consumer Duty · vulnerability / communication gap",
+        "demo": "consumer-duty",
+        "expected_recommendation": "Escalate",
+        "why_expected": "Material vulnerability and communication-preference concerns remain unresolved alongside missing affordability evidence.",
+        "case": {
+            "customer_circumstances": "Customer lost their job six weeks ago, is receiving Universal Credit and has missed two payments.",
+            "interaction_notes": "Customer disclosed a recent bereavement, became distressed and asked for email contact only because repeated calls were difficult.",
+            "vulnerability_support_needs": "Bereavement, emotional distress, financial difficulty and email contact preference.",
+            "actions_taken": "A six-month £120 payment plan was agreed without a recorded income-and-expenditure assessment. Standard outbound calls continued and no wider support signposting was recorded.",
+            "agent_rationale": "The customer agreed to the plan so affordability and fair treatment are considered sufficiently evidenced.",
+            "uploaded_evidence": "",
+        },
+    },
+    "cd-evidenced-support": {
+        "name": "Consumer Duty · evidenced tailored support",
+        "demo": "consumer-duty",
+        "expected_recommendation": "Pass",
+        "why_expected": "The fictional case records affordability evidence, tailored support, communication preference and follow-up.",
+        "case": {
+            "customer_circumstances": "Customer experienced a temporary reduction in income after reduced working hours and contacted the firm before missing a payment.",
+            "interaction_notes": "Customer requested email contact and confirmed they were comfortable completing an income-and-expenditure assessment.",
+            "vulnerability_support_needs": "Temporary financial difficulty. Email preference recorded. No additional support need identified from the information supplied.",
+            "actions_taken": "Income and expenditure was completed and evidenced a sustainable three-month reduced payment plan. Email preference was applied, debt-advice information was offered and a review date was set.",
+            "agent_rationale": "The arrangement was based on recorded affordability evidence, the customer's communication preference was applied, support options were discussed and the plan is subject to review.",
+            "uploaded_evidence": "",
+        },
+    },
+    "mf-dca-evidence-gap": {
+        "name": "Motor Finance · DCA classification evidence gap",
+        "demo": "motor-finance",
+        "expected_recommendation": "Further Work",
+        "why_expected": "The DCA flag and commission amount are present, but the underlying rate-setting and commission mechanism are not evidenced.",
+        "case": {
+            "agreement_details": "PCP agreement entered in June 2018 through a motor dealer. Customer financed £18,500 over 48 months.",
+            "commission_evidence": "Lender extract records £1,240 commission. Original commission schedule is not in the case file.",
+            "arrangement_classification": "Classified as DCA because the lender extract contains a DCA flag. No document explains dealer rate-setting discretion or how commission varied.",
+            "disclosure_customer_evidence": "Customer says they were not told the dealer would receive commission. Signed agreement is present, but no separate commission disclosure evidence has been identified.",
+            "proposed_outcome": "Reviewer proposes placing the case in the illustrative redress cohort based on the DCA flag and commission payment.",
+            "reviewer_rationale": "The DCA flag and commission payment are treated as sufficient to progress without further document retrieval.",
+            "uploaded_evidence": "",
+        },
+    },
+    "mf-fixed-fee-supported": {
+        "name": "Motor Finance · fixed-fee evidence supported",
+        "demo": "motor-finance",
+        "expected_recommendation": "Pass",
+        "why_expected": "The fictional evidence consistently supports a fixed-fee arrangement with no dealer discretion over rate.",
+        "case": {
+            "agreement_details": "Hire-purchase agreement from 2019. Signed agreement and lender terms are present.",
+            "commission_evidence": "Lender record and broker terms show a fixed £250 fee paid to the dealer.",
+            "arrangement_classification": "Broker terms state the customer interest rate was predetermined by the lender and the dealer could not change it. Commission remained £250 regardless of rate or term selected.",
+            "disclosure_customer_evidence": "The supplied pre-contract information states the dealer may receive a fixed commission from the lender. Customer evidence does not contradict the documents.",
+            "proposed_outcome": "Reviewer proposes classifying the arrangement as fixed fee / non-DCA, subject to current scheme applicability checks.",
+            "reviewer_rationale": "The classification is supported by the lender terms, fixed-fee record and no-discretion evidence.",
+            "uploaded_evidence": "",
+        },
+    },
+    "rem-closure-risk": {
+        "name": "Remediation · premature closure risk",
+        "demo": "remediation",
+        "expected_recommendation": "Escalate",
+        "why_expected": "Population scope, estimated dates, reconciliation and QA exceptions remain unresolved despite a high completion percentage.",
+        "case": {
+            "customer_harm": "Platform migration delays affected transfers, investment instructions and cash movements. The programme assumes harm is limited to complaints and incident-coded cases.",
+            "population_identification": "1,250 customers are in scope. Customers without a complaint or incident code are excluded. Eight percent of records have missing or estimated instruction dates. Programme is 96% complete.",
+            "data_lineage": "Legacy platform, migration extracts and payment files are used. Some dates are estimated from document-upload dates. Full source-to-redress reconciliation is incomplete.",
+            "redress_methodology": "Average delay from completed cases is used when exact delay dates are missing.",
+            "qa_outcome_testing": "Twenty cases were tested. Two had incorrect delay dates. They were corrected individually with no wider re-sample.",
+            "governance_closure": "Closure is proposed once the remaining 4% are completed despite open population, estimated-date and QA issues.",
+            "uploaded_evidence": "",
+        },
+    },
+    "rem-controlled-programme": {
+        "name": "Remediation · controlled programme evidence",
+        "demo": "remediation",
+        "expected_recommendation": "Pass",
+        "why_expected": "The fictional programme records reconciled population logic, traceable data, documented methodology, risk-based QA and closure controls.",
+        "case": {
+            "customer_harm": "Defined harm is delay-related financial loss from a specific platform incident affecting transfer instructions between two confirmed dates.",
+            "population_identification": "Population was built from all affected journey records rather than complaints alone. Inclusion/exclusion rules are documented and source totals reconcile to case totals.",
+            "data_lineage": "Instruction, execution and payment dates are traced to named source systems. Exceptions are separately identified and reconciled.",
+            "redress_methodology": "Methodology uses actual evidenced delay dates and documented calculation rules. Exceptions require specialist approval and are logged.",
+            "qa_outcome_testing": "Risk-based QA covers normal cases, high-value cases and exceptions. Any material error triggers root-cause review and re-sampling.",
+            "governance_closure": "Closure requires population reconciliation, unresolved-exception sign-off, QA thresholds and governance approval, not completion percentage alone.",
+            "uploaded_evidence": "",
+        },
+    },
+}
+
 
 def _record_demo_run(demo: str, success: bool) -> None:
     if demo not in _demo_usage:
@@ -473,9 +569,89 @@ async def _extract_uploaded_files(files: list[UploadFile]) -> dict:
     return {"files": extracted}
 
 
+
+def _evaluation_metrics(result_dict: dict) -> dict:
+    findings = result_dict.get("findings") or []
+    traceable = 0
+    regulatory_refs = 0
+    regulatory_refs_with_url = 0
+    for finding in findings:
+        if finding.get("evidence_refs"):
+            traceable += 1
+        ref = finding.get("fca_reference") or finding.get("regulatory_reference")
+        url = finding.get("fca_url") or finding.get("regulatory_url")
+        if ref:
+            regulatory_refs += 1
+            if url:
+                regulatory_refs_with_url += 1
+    traceability_rate = round((traceable / len(findings)) * 100) if findings else 100
+    source_link_rate = round((regulatory_refs_with_url / regulatory_refs) * 100) if regulatory_refs else 100
+    return {
+        "finding_count": len(findings),
+        "evidence_traceability_rate": traceability_rate,
+        "regulatory_source_link_rate": source_link_rate,
+    }
+
+
+async def _run_benchmark(benchmark_id: str) -> dict:
+    benchmark = BENCHMARKS.get(benchmark_id)
+    if not benchmark:
+        raise HTTPException(status_code=404, detail="Unknown benchmark case.")
+
+    started = time.perf_counter()
+    demo = benchmark["demo"]
+    case = benchmark["case"]
+
+    if demo == "consumer-duty":
+        result = await run_consumer_duty_assurance(case)
+    elif demo == "motor-finance":
+        result = await run_motor_finance_assurance(case)
+    else:
+        result = await run_remediation_assurance(case)
+
+    elapsed = round(time.perf_counter() - started, 2)
+    result_dict = result.model_dump()
+    metrics = _evaluation_metrics(result_dict)
+    actual = result_dict.get("recommendation")
+    expected = benchmark["expected_recommendation"]
+    record = {
+        "timestamp_unix": int(time.time()),
+        "benchmark_id": benchmark_id,
+        "benchmark_name": benchmark["name"],
+        "demo": demo,
+        "expected_recommendation": expected,
+        "actual_recommendation": actual,
+        "recommendation_match": actual == expected,
+        "elapsed_seconds": elapsed,
+        **metrics,
+    }
+    _evaluation_history.appendleft(record)
+    return {
+        "benchmark": {
+            "id": benchmark_id,
+            "name": benchmark["name"],
+            "demo": demo,
+            "expected_recommendation": expected,
+            "why_expected": benchmark["why_expected"],
+        },
+        "evaluation": record,
+        "output_summary": {
+            "rationale": result_dict.get("rationale", ""),
+            "agents_consulted": result_dict.get("agents_consulted", []),
+            "decision_drivers": result_dict.get("decision_drivers") or result_dict.get("escalation_drivers") or [],
+        },
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home():
     with open("index.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.get("/evaluation", response_class=HTMLResponse)
+async def evaluation_page():
+    with open("evaluation.html", "r", encoding="utf-8") as f:
         return f.read()
 
 
@@ -497,6 +673,47 @@ async def remediation_page():
         return f.read()
 
 
+@app.get("/api/evaluation/benchmarks")
+async def evaluation_benchmarks():
+    return {
+        "versions": {
+            "workflow": WORKFLOW_VERSION,
+            "grounding_pack": GROUNDING_VERSION,
+            "evaluation_harness": EVALUATION_HARNESS_VERSION,
+        },
+        "benchmarks": [
+            {
+                "id": key,
+                "name": value["name"],
+                "demo": value["demo"],
+                "expected_recommendation": value["expected_recommendation"],
+                "why_expected": value["why_expected"],
+            }
+            for key, value in BENCHMARKS.items()
+        ],
+    }
+
+
+@app.get("/api/evaluation/history")
+async def evaluation_history():
+    return {
+        "note": "Evaluation history is in-memory and resets when Render restarts or redeploys.",
+        "runs": list(_evaluation_history),
+    }
+
+
+@app.post("/api/evaluation/run/{benchmark_id}")
+async def evaluation_run(benchmark_id: str, request: Request):
+    _require_api_key()
+    _check_rate_limit(request)
+    try:
+        return await _run_benchmark(benchmark_id)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Evaluation run failed: {exc}") from exc
+
+
 @app.get("/api/demo-usage")
 async def demo_usage():
     total_successful = sum(v["successful_runs"] for v in _demo_usage.values())
@@ -516,7 +733,7 @@ async def health():
     return {
         "status": "ok",
         "agentic_mode": bool(os.getenv("OPENAI_API_KEY")),
-        "demos": ["consumer-duty", "motor-finance", "remediation"],
+        "demos": ["consumer-duty", "motor-finance", "remediation", "evaluation-governance"],
         "remediation_features": ["document-extraction", "evidence-traceability", "risk-dashboard", "rca-flow", "pdf-report"],
         "motor_finance_features": ["agreement-evidence-upload", "evidence-matrix", "evidence-flow", "pdf-report"],
         "consumer_duty_features": ["journey-evidence-upload", "customer-journey", "evidence-traceability", "pdf-report"],
