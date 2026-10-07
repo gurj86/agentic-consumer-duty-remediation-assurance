@@ -40,6 +40,7 @@ class ConsumerDutyCaseInput(BaseModel):
     vulnerability_support_needs: str
     actions_taken: str
     agent_rationale: str
+    uploaded_evidence: str = ""
 
 
 class MotorFinanceCaseInput(BaseModel):
@@ -49,6 +50,7 @@ class MotorFinanceCaseInput(BaseModel):
     disclosure_customer_evidence: str
     proposed_outcome: str
     reviewer_rationale: str
+    uploaded_evidence: str = ""
 
 
 class RemediationProgrammeInput(BaseModel):
@@ -303,6 +305,157 @@ def _build_remediation_pdf(payload: dict) -> bytes:
     return buffer.getvalue()
 
 
+
+def _build_case_assurance_pdf(payload: dict, title: str, mode: str) -> bytes:
+    result = payload.get("result") or {}
+    human_decision = payload.get("human_decision") or "Not recorded"
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=16 * mm,
+        leftMargin=16 * mm,
+        topMargin=16 * mm,
+        bottomMargin=16 * mm,
+        title=title,
+        author="Portfolio demonstration",
+    )
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name="CaseTitleCenter", parent=styles["Title"], alignment=TA_CENTER, spaceAfter=12))
+    styles.add(ParagraphStyle(name="CaseSmallMuted", parent=styles["BodyText"], fontSize=8, leading=10, textColor="#667085"))
+    styles.add(ParagraphStyle(name="CaseSection", parent=styles["Heading2"], spaceBefore=10, spaceAfter=6))
+
+    story = [
+        Paragraph(_safe_pdf_text(title), styles["CaseTitleCenter"]),
+        Paragraph("Portfolio demonstration · Fictional / anonymised data only", styles["CaseSmallMuted"]),
+        Spacer(1, 8),
+        Paragraph(f"<b>Recommendation:</b> {_safe_pdf_text(result.get('recommendation', '—'))}", styles["Heading2"]),
+        Paragraph(_safe_pdf_text(result.get("case_summary", "")), styles["BodyText"]),
+        Spacer(1, 5),
+        Paragraph(_safe_pdf_text(result.get("rationale", "")), styles["BodyText"]),
+    ]
+
+    drivers = result.get("decision_drivers") or result.get("escalation_drivers") or []
+    if drivers:
+        story.append(Paragraph("Decision drivers", styles["CaseSection"]))
+        for item in drivers:
+            story.append(Paragraph("• " + _safe_pdf_text(item), styles["BodyText"]))
+
+    if mode == "motor":
+        matrix = result.get("evidence_matrix") or []
+        if matrix:
+            story.append(Paragraph("Evidence sufficiency matrix", styles["CaseSection"]))
+            rows = [["Evidence required", "Status", "Source", "Gap / observation"]]
+            for item in matrix:
+                rows.append([
+                    Paragraph(_safe_pdf_text(item.get("evidence_required", "")), styles["BodyText"]),
+                    _safe_pdf_text(item.get("status", "")),
+                    Paragraph(_safe_pdf_text(item.get("source", "")), styles["BodyText"]),
+                    Paragraph(_safe_pdf_text(item.get("gap_or_observation", "")), styles["BodyText"]),
+                ])
+            table = Table(rows, colWidths=[42 * mm, 22 * mm, 43 * mm, 57 * mm], repeatRows=1)
+            table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), "#EEF3FF"),
+                ("GRID", (0, 0), (-1, -1), 0.4, "#C8D2E2"),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 7),
+                ("LEADING", (0, 0), (-1, -1), 9),
+            ]))
+            story.append(table)
+
+        flow = result.get("agreement_evidence_flow") or {}
+        if flow:
+            story.append(Paragraph("Agreement evidence flow", styles["CaseSection"]))
+            for label, key in [
+                ("Agreement", "agreement"),
+                ("Commission evidence", "commission_evidence"),
+                ("Arrangement type", "arrangement_type"),
+                ("Disclosure", "disclosure"),
+                ("Customer evidence", "customer_evidence"),
+                ("Scheme pathway", "scheme_pathway"),
+                ("Assurance outcome", "assurance_outcome"),
+            ]:
+                story.append(Paragraph(f"<b>{label}:</b> {_safe_pdf_text(flow.get(key, ''))}", styles["BodyText"]))
+
+    if mode == "consumer":
+        journey = result.get("customer_journey") or []
+        if journey:
+            story.append(Paragraph("Customer journey reconstruction", styles["CaseSection"]))
+            rows = [["Stage", "Status", "Event / evidence", "Source"]]
+            for item in journey:
+                rows.append([
+                    Paragraph(_safe_pdf_text(item.get("stage", "")), styles["BodyText"]),
+                    _safe_pdf_text(item.get("status", "")),
+                    Paragraph(_safe_pdf_text(item.get("event", "")), styles["BodyText"]),
+                    Paragraph(_safe_pdf_text(item.get("evidence_source", "")), styles["BodyText"]),
+                ])
+            table = Table(rows, colWidths=[34 * mm, 24 * mm, 72 * mm, 34 * mm], repeatRows=1)
+            table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), "#EEF3FF"),
+                ("GRID", (0, 0), (-1, -1), 0.4, "#C8D2E2"),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 7),
+                ("LEADING", (0, 0), (-1, -1), 9),
+            ]))
+            story.append(table)
+
+    findings = result.get("findings") or []
+    if findings:
+        story.append(PageBreak())
+        story.append(Paragraph("Detailed findings", styles["CaseSection"]))
+        for i, finding in enumerate(findings, start=1):
+            story.append(Paragraph(
+                f"<b>{i}. {_safe_pdf_text(finding.get('area',''))} · {_safe_pdf_text(str(finding.get('severity','')).upper())}</b>",
+                styles["Heading3"],
+            ))
+            story.append(Paragraph("<b>Issue:</b> " + _safe_pdf_text(finding.get("issue", "")), styles["BodyText"]))
+            story.append(Paragraph("<b>Why it matters:</b> " + _safe_pdf_text(finding.get("why_it_matters", "")), styles["BodyText"]))
+            story.append(Paragraph("<b>Reviewer action:</b> " + _safe_pdf_text(finding.get("reviewer_action", "")), styles["BodyText"]))
+            for ev in finding.get("evidence_refs") or []:
+                story.append(Paragraph(
+                    f"<b>Evidence:</b> [{_safe_pdf_text(ev.get('source',''))}] {_safe_pdf_text(ev.get('evidence',''))}",
+                    styles["CaseSmallMuted"],
+                ))
+            if finding.get("fca_reference"):
+                story.append(Paragraph(
+                    "<b>FCA reference to verify:</b> " + _safe_pdf_text(finding.get("fca_reference")),
+                    styles["CaseSmallMuted"],
+                ))
+            story.append(Spacer(1, 6))
+
+    evidence = result.get("evidence_to_obtain") or []
+    if evidence:
+        story.append(Paragraph("Evidence to obtain / verify", styles["CaseSection"]))
+        for item in evidence:
+            story.append(Paragraph("• " + _safe_pdf_text(item), styles["BodyText"]))
+
+    story.append(Paragraph("Human decision", styles["CaseSection"]))
+    story.append(Paragraph(_safe_pdf_text(human_decision), styles["BodyText"]))
+    story.append(Spacer(1, 8))
+    story.append(Paragraph(
+        "This report is generated by a portfolio prototype. It does not make legal, regulatory, eligibility or compensation decisions. Human review remains required.",
+        styles["CaseSmallMuted"],
+    ))
+    doc.build(story)
+    return buffer.getvalue()
+
+
+async def _extract_uploaded_files(files: list[UploadFile]) -> dict:
+    if not files or len(files) > MAX_UPLOAD_FILES:
+        raise HTTPException(status_code=400, detail=f"Upload between 1 and {MAX_UPLOAD_FILES} files.")
+    extracted = []
+    for upload in files:
+        filename = Path(upload.filename or "upload").name
+        data = await upload.read(MAX_UPLOAD_BYTES + 1)
+        if len(data) > MAX_UPLOAD_BYTES:
+            raise HTTPException(status_code=400, detail=f"{filename}: file exceeds the 2 MB demo limit.")
+        text = _extract_file_text(filename, data)
+        extracted.append({"filename": filename, "text": text, "characters": len(text)})
+    return {"files": extracted}
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home():
     with open("index.html", "r", encoding="utf-8") as f:
@@ -334,6 +487,8 @@ async def health():
         "agentic_mode": bool(os.getenv("OPENAI_API_KEY")),
         "demos": ["consumer-duty", "motor-finance", "remediation"],
         "remediation_features": ["document-extraction", "evidence-traceability", "risk-dashboard", "rca-flow", "pdf-report"],
+        "motor_finance_features": ["agreement-evidence-upload", "evidence-matrix", "evidence-flow", "pdf-report"],
+        "consumer_duty_features": ["journey-evidence-upload", "customer-journey", "evidence-traceability", "pdf-report"],
     }
 
 
@@ -368,17 +523,19 @@ async def motor_finance_review(case: MotorFinanceCaseInput, request: Request):
 @app.post("/api/remediation/extract")
 async def remediation_extract(request: Request, files: list[UploadFile] = File(...)):
     _check_rate_limit(request)
-    if not files or len(files) > MAX_UPLOAD_FILES:
-        raise HTTPException(status_code=400, detail=f"Upload between 1 and {MAX_UPLOAD_FILES} files.")
-    extracted = []
-    for upload in files:
-        filename = Path(upload.filename or "upload").name
-        data = await upload.read(MAX_UPLOAD_BYTES + 1)
-        if len(data) > MAX_UPLOAD_BYTES:
-            raise HTTPException(status_code=400, detail=f"{filename}: file exceeds the 2 MB demo limit.")
-        text = _extract_file_text(filename, data)
-        extracted.append({"filename": filename, "text": text, "characters": len(text)})
-    return {"files": extracted}
+    return await _extract_uploaded_files(files)
+
+
+@app.post("/api/motor-finance/extract")
+async def motor_finance_extract(request: Request, files: list[UploadFile] = File(...)):
+    _check_rate_limit(request)
+    return await _extract_uploaded_files(files)
+
+
+@app.post("/api/consumer-duty/extract")
+async def consumer_duty_extract(request: Request, files: list[UploadFile] = File(...)):
+    _check_rate_limit(request)
+    return await _extract_uploaded_files(files)
 
 
 @app.post("/api/remediation/review")
@@ -402,6 +559,34 @@ async def remediation_report(payload: dict):
         content=pdf_bytes,
         media_type="application/pdf",
         headers={"Content-Disposition": 'attachment; filename="remediation-assurance-report.pdf"'},
+    )
+
+
+@app.post("/api/motor-finance/report")
+async def motor_finance_report(payload: dict):
+    pdf_bytes = _build_case_assurance_pdf(
+        payload,
+        "Agentic Motor Finance Remediation Assurance Report",
+        "motor",
+    )
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="motor-finance-assurance-report.pdf"'},
+    )
+
+
+@app.post("/api/consumer-duty/report")
+async def consumer_duty_report(payload: dict):
+    pdf_bytes = _build_case_assurance_pdf(
+        payload,
+        "Agentic Consumer Duty Assurance Report",
+        "consumer",
+    )
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="consumer-duty-assurance-report.pdf"'},
     )
 
 
