@@ -16,6 +16,24 @@ required rather than filling the gap from memory.
 
 """ + MOTOR_FINANCE_GROUNDING_PACK + "\n\n"
 
+BASE_BOUNDARY = GROUNDING_INSTRUCTION + """
+This is a fictional UK motor-finance commission remediation portfolio demonstration.
+Do not make a legal determination, do not state that a regulatory breach definitely
+occurred, and do not calculate or instruct real compensation. Distinguish evidence
+from inference. Where evidence is missing or contradictory, say so. Scheme rules
+and legal positions may change. Final judgement is human-led.
+
+The case may include reviewer-entered fields and extracted text from uploaded
+fictional/anonymised evidence files. Treat those as the only case evidence.
+Never claim an agreement, commission schedule, disclosure or lender record says
+something unless it is actually present in the supplied material.
+"""
+
+
+class EvidenceRef(BaseModel):
+    source: str
+    evidence: str
+
 
 class AssuranceFinding(BaseModel):
     area: str
@@ -23,10 +41,29 @@ class AssuranceFinding(BaseModel):
     issue: str
     why_it_matters: str
     reviewer_action: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
     fca_reference: str | None = None
     fca_url: str | None = None
     fos_example: str | None = None
     fos_url: str | None = None
+
+
+class EvidenceMatrixRow(BaseModel):
+    evidence_required: str
+    status: Literal["Confirmed", "Unclear", "Missing"]
+    source: str
+    gap_or_observation: str
+    agent_conclusion: str
+
+
+class AgreementEvidenceFlow(BaseModel):
+    agreement: str
+    commission_evidence: str
+    arrangement_type: str
+    disclosure: str
+    customer_evidence: str
+    scheme_pathway: str
+    assurance_outcome: str
 
 
 class AssuranceResult(BaseModel):
@@ -35,232 +72,173 @@ class AssuranceResult(BaseModel):
     rationale: str
     agents_consulted: list[str] = Field(default_factory=list)
     escalation_drivers: list[str] = Field(default_factory=list)
+    evidence_matrix: list[EvidenceMatrixRow] = Field(default_factory=list)
+    agreement_evidence_flow: AgreementEvidenceFlow
     findings: list[AssuranceFinding] = Field(default_factory=list)
     evidence_to_obtain: list[str] = Field(default_factory=list)
     human_review_note: str
-
-
-BASE_BOUNDARY = GROUNDING_INSTRUCTION + """
-This is a fictional UK motor-finance commission remediation portfolio demonstration.
-Do not make a legal determination, do not state that a regulatory breach definitely
-occurred, and do not calculate or instruct real compensation. Distinguish evidence
-from inference. Where evidence is missing or contradictory, say so. Scheme rules
-and legal positions may change. Final judgement is human-led.
-"""
 
 
 commission_evidence_agent = Agent(
     name="Commission Evidence Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Review only the underlying commission evidence.
+Review the underlying commission evidence, including uploaded evidence where present.
 Apply the commission-evidence principles and CONRED record-source guidance in the
-curated grounding pack before using general reasoning.
-Check whether the commission amount, payment record, agreement/broker/dealer
-relationship and source documents support the case description. Flag missing,
-conflicting or assumed evidence. Do not infer that absence of a record proves
-absence of commission. Return concise findings and reviewer actions.
+curated grounding pack. Check whether the amount, payment record, broker/dealer
+relationship and source records support the case description. Trace any finding to
+a supplied field or uploaded filename and do not infer that absence proves no commission.
 """,
 )
-
 
 arrangement_agent = Agent(
     name="Commission Arrangement Classification Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Review whether the stated commission-arrangement classification is supported by
-the curated arrangement-classification framework first. Then assess whether
-the evidence entered. Consider DCA, high-commission, contractual-tie and
-no-flagged-arrangement descriptions. For DCA, look for evidence about discretion
-over the customer interest rate or credit terms and whether commission could vary
-with that discretion. Do not decide legal eligibility. Flag where classification
-is asserted without enough evidence.
+Review whether the stated commission-arrangement classification is supported.
+For DCA, look for evidence of discretion over the customer interest rate or credit
+terms and whether commission could vary with that discretion. Do not treat a system
+flag alone as conclusive where the underlying mechanism is not evidenced. Trace
+material findings to supplied evidence.
 """,
 )
-
 
 disclosure_agent = Agent(
     name="Disclosure and Customer Evidence Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Apply the curated disclosure/customer-evidence framework first.
-Review customer complaint evidence and what the file says was disclosed about
-commission and the broker/dealer relationship. Challenge conclusions that rely
-only on the customer signing the finance agreement. Identify where the reviewer
-has not addressed relevant customer evidence, disclosure evidence or contradictions.
-Return concise assurance findings.
+Review what the supplied agreement, disclosure records and customer evidence actually
+show about commission and the broker/dealer relationship. Do not treat a signature
+alone as proof of adequate commission disclosure or customer understanding. Trace
+material findings to the supplied field or uploaded filename.
 """,
 )
-
 
 methodology_agent = Agent(
     name="Redress and Methodology Assurance Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Apply the curated methodology/outcome framework first.
-Review the proposed outcome and reviewer rationale against the facts supplied.
-Do not calculate compensation. Check whether a proposed eligibility/redress
-position is firmer than the evidence, whether exclusions or assumptions are
-explained, and whether missing data should be resolved before a final outcome.
-Treat this as methodology assurance, not a final redress decision.
+Review the proposed outcome and methodology rationale against the supplied evidence.
+Do not calculate compensation. Challenge outcomes that are firmer than the evidence,
+unsupported assumptions or missing inputs that should be resolved before a final
+scheme outcome. Trace findings to supplied evidence.
 """,
 )
-
 
 evidence_agent = Agent(
     name="Evidence Challenge Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Apply the curated evidence/rationale framework first.
-Challenge the overall evidence and rationale. Look for contradictions, missing
-records, generic reasoning, unsupported conclusions, and situations where
-'no evidence found' is treated as evidence that something did not occur.
-Return practical reviewer actions and distinguish fact from inference.
+Challenge contradictions, missing records, generic reasoning, unsupported conclusions
+and situations where 'no evidence found' is treated as proof that something did not
+occur. Where multiple documents conflict, identify the conflict and sources.
 """,
 )
-
 
 fos_examples_agent = Agent(
     name="FOS Motor Finance Example Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
 Use only the published FOS motor-finance examples in the curated grounding pack.
-Identify an example only where it genuinely helps a human reviewer understand the
-evidence or classification issue in the current case.
-
-Never treat an FOS decision as an FCA rule, current scheme test, binding precedent,
-proof of unfairness or proof of entitlement. Explain the factual theme that makes
-the example relevant. If none is meaningfully relevant, do not invent one.
-
-Return the exact decision/example label and exact source URL from the grounding pack.
+Identify an example only where it genuinely helps explain the evidence or
+classification issue. Treat it as fact-specific and non-binding, never as the
+current FCA scheme test. Return the exact label and source URL from the pack.
 """,
 )
-
 
 regulatory_agent = Agent(
     name="Regulatory Reference Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Use the curated FCA / CONRED reference points in the grounding pack first.
-Identify relevant public FCA rules, scheme materials or Handbook areas for a
-human reviewer to verify. Prefer the approved reference map below. Do not invent
-rule numbers, quotations or URLs. If a precise provision is uncertain, give the
-broader source and clearly say it requires human verification.
-
-APPROVED FCA REFERENCE MAP:
-- PS26/3 — Motor finance consumer redress scheme
-  https://www.fca.org.uk/publications/policy-statements/ps26-3-motor-finance-consumer-redress-scheme
-- CONRED 5 — Motor finance consumer redress scheme
-  https://handbook.fca.org.uk/handbook/CONRED/5/
-- CONRED 6 — Motor finance consumer redress scheme: earlier agreements / relevant period chapter
-  https://handbook.fca.org.uk/handbook/CONRED/6/
-- CONC 4.5 — Commission disclosure and related credit-broking provisions
-  https://handbook.fca.org.uk/handbook/CONC/4/5.html
-- CONC 4.5.3 / 4.5.3A — commission disclosure provisions where applicable
-  https://handbook.fca.org.uk/handbook/CONC/4/5.html
-- CONC 4.5.7 — examples / treatment relevant to discretionary commission arrangements
-  https://handbook.fca.org.uk/handbook/CONC/4/5.html
-- FCA information for firms on motor finance complaints
-  https://www.fca.org.uk/firms/information-firms-motor-finance-complaints
-
-When giving a regulatory point, include:
-1. the reference label;
-2. the matching URL from this approved list; and
-3. a reminder that the reviewer must verify applicability for the agreement date
-   and current FCA scheme status.
-
-These are reference points, not proof of breach or entitlement.
+Use only supported FCA / CONRED / CONC reference points from the curated grounding
+pack and approved map. Do not invent rule numbers, quotes or URLs. Remind the human
+reviewer to verify applicability for agreement date and current scheme status.
 """,
 )
-
 
 lead_agent = Agent(
     name="Lead Motor Finance Assurance Agent",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-You are the lead assurance agent reviewing a completed fictional motor-finance
-commission remediation case.
+Review the fictional motor-finance evidence pack and decide which specialists to call.
+Reconcile their outputs into one human-reviewable assurance result.
 
-Decide which specialist agents are useful, call them as tools, reconcile their
-outputs and produce one structured assurance result.
+EVIDENCE TRACEABILITY
+Every material finding must include evidence_refs. Source must be one of these field
+labels or an uploaded filename exactly as labelled in the evidence text:
+Agreement details
+Commission evidence
+Arrangement classification
+Disclosure / customer evidence
+Proposed outcome
+Reviewer rationale
+The evidence value must be a short excerpt or faithful paraphrase. Never invent evidence.
 
-Use the curated motor-finance assurance framework as the primary basis for
-Pass / Further Work / Escalate.
+EVIDENCE SUFFICIENCY MATRIX
+Build a concise matrix covering, where relevant:
+- executed agreement / agreement terms
+- commission payment / amount
+- commission schedule or broker/dealer terms
+- rate-setting discretion / DCA mechanism
+- commission disclosure evidence
+- customer evidence / complaint account
+- scheme classification inputs
+Use Confirmed, Unclear or Missing. "Confirmed" means the supplied material genuinely
+supports the point, not merely that a system flag exists.
 
-For cases where DCA classification, disclosure, commission evidence or a proposed
-scheme outcome is materially in issue, consult BOTH the regulatory-reference
-specialist and the FOS-example specialist where a curated FOS example is genuinely
-relevant. Do not force a source where the facts do not support one.
+AGREEMENT EVIDENCE FLOW
+Create a concise flow:
+Agreement -> Commission evidence -> Arrangement type -> Disclosure -> Customer
+evidence -> Scheme pathway -> Assurance outcome.
+If a stage is not evidenced, say so rather than filling the gap.
 
-Your purpose is to identify evidence gaps, unsupported commission classifications,
-unaddressed disclosure/customer evidence, methodology concerns and regulatory
-reference points that require human verification.
+For material DCA, disclosure, commission or scheme-outcome issues, use regulatory
+and FOS specialists where relevant. FCA/FOS material is for human verification,
+not proof of breach or entitlement.
 
-Recommend:
-- Pass only where evidence and rationale appear coherent with no material gap;
-- Further Work where evidence, classification or rationale needs clarification;
-- Escalate where there is a potentially significant contradiction, missing key
-  evidence, material customer-outcome concern or issue needing senior review.
-
-Record the names of the specialist tools you ACTUALLY called in agents_consulted.
-Do not list a specialist unless you called that tool during this review. Use these
-friendly labels:
+Record only specialists ACTUALLY called using:
 - Commission Evidence
 - Arrangement Classification
 - Disclosure & Customer Evidence
 - Redress & Methodology
 - Evidence Challenge
 - Regulatory Reference
+- FOS Illustrative Example
 
-For each finding, populate fca_reference AND fca_url when the regulatory specialist
-has identified an applicable reference. The reference must name the exact rule or
-source returned by the regulatory specialist, for example "CONC 4.5.3 / 4.5.3A"
-or "CONRED 5". Do not provide a URL without its matching reference label.
-Only use URLs supplied by the regulatory specialist from the approved map.
-Never fabricate rules or URLs. If there is no sufficiently supported regulatory
-reference for a finding, leave both fields null.
+Recommend Pass only with coherent evidence and no material gap; Further Work where
+evidence/classification needs clarification; Escalate where key evidence is missing,
+contradictory or creates a material customer-outcome concern.
 
-Populate fos_example and fos_url only where the FOS specialist identified a genuinely
-relevant published decision/example. The FOS item must be described as illustrative,
-fact-specific and non-binding. Never use it as the current FCA scheme test.
-
-Populate escalation_drivers with the 2-3 most material reasons supporting the
-overall recommendation. Keep each driver short, evidence-led and audit-friendly.
-If the recommendation is Pass, use an empty list. If the recommendation is Further
-Work, use the most material unresolved evidence or methodology points rather than
-calling them escalation issues.
-
-Keep the output concise and practical for a QA / remediation reviewer. Make clear
-that the human reviewer owns the final decision.
+Keep output concise, audit-friendly and human-led.
 """,
     tools=[
         commission_evidence_agent.as_tool(
             tool_name="review_commission_evidence",
-            tool_description="Check commission amount, records and underlying evidence completeness.",
+            tool_description="Check commission records and source evidence completeness.",
         ),
         arrangement_agent.as_tool(
             tool_name="review_arrangement_classification",
-            tool_description="Challenge DCA, high-commission, contractual-tie or no-flag classification.",
+            tool_description="Challenge DCA and other commission-arrangement classification.",
         ),
         disclosure_agent.as_tool(
             tool_name="review_disclosure_customer_evidence",
-            tool_description="Review commission disclosure and customer complaint evidence.",
+            tool_description="Review disclosure, signed agreement and customer evidence.",
         ),
         methodology_agent.as_tool(
             tool_name="review_redress_methodology",
-            tool_description="Assure the proposed outcome and methodology rationale without calculating redress.",
+            tool_description="Assure proposed outcome and methodology without calculating compensation.",
         ),
         evidence_agent.as_tool(
             tool_name="challenge_evidence_rationale",
-            tool_description="Challenge contradictions, missing evidence and unsupported reviewer conclusions.",
+            tool_description="Challenge contradictions, missing evidence and unsupported rationale.",
         ),
         regulatory_agent.as_tool(
             tool_name="identify_fca_references",
-            tool_description="Identify relevant FCA / CONRED / CONC references for human verification.",
+            tool_description="Identify curated FCA / CONRED / CONC references for verification.",
         ),
         fos_examples_agent.as_tool(
             tool_name="identify_fos_motor_finance_examples",
-            tool_description="Identify relevant published FOS motor-finance decisions as non-binding illustrations.",
+            tool_description="Identify relevant published FOS motor-finance illustrations.",
         ),
     ],
     output_type=AssuranceResult,
@@ -268,15 +246,23 @@ that the human reviewer owns the final decision.
 
 
 async def run_assurance(case: dict) -> AssuranceResult:
+    uploaded = case.get("uploaded_evidence", "")
     prompt = """
 Review the following fictional motor-finance commission remediation case.
 
-Use the specialist tools where they add value. Do not assume every specialist is
-needed. The final output is an assurance recommendation for a human reviewer, not
-a legal, eligibility or compensation decision.
+Use specialist tools where they add value. The final output is an assurance
+recommendation for a human reviewer, not a legal, eligibility or compensation decision.
 
-CASE:
-""" + json.dumps(case, indent=2)
+CASE FIELDS:
+""" + json.dumps({k: v for k, v in case.items() if k != "uploaded_evidence"}, indent=2)
 
-    result = await Runner.run(lead_agent, prompt, max_turns=16)
+    if uploaded.strip():
+        prompt += """
+
+UPLOADED EVIDENCE TEXT:
+File boundaries are labelled. Use those filenames exactly in evidence references.
+
+""" + uploaded
+
+    result = await Runner.run(lead_agent, prompt, max_turns=20)
     return result.final_output
