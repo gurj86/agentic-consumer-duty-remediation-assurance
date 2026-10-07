@@ -8,32 +8,10 @@ from knowledge_base import GROUNDING_PACK
 
 MODEL = "gpt-6-luna"
 
-
-class AssuranceFinding(BaseModel):
-    area: str
-    severity: Literal["low", "medium", "high"]
-    issue: str
-    why_it_matters: str
-    reviewer_action: str
-    fca_reference: str | None = None
-    fca_url: str | None = None
-    fos_example: str | None = None
-    fos_url: str | None = None
-
-
-class AssuranceResult(BaseModel):
-    case_summary: str
-    recommendation: Literal["Pass", "Further Work", "Escalate"]
-    rationale: str
-    findings: list[AssuranceFinding] = Field(default_factory=list)
-    evidence_to_obtain: list[str] = Field(default_factory=list)
-    human_review_note: str
-
-
 GROUNDING_INSTRUCTION = """
 Use the curated grounding pack below as the primary assurance framework for this
 portfolio demo. Do not contradict it with general model knowledge. If the pack
-does not support a precise regulatory conclusion, say that human verification is
+does not support a precise regulatory conclusion, say human verification is
 required rather than filling the gap from memory.
 
 """ + GROUNDING_PACK + "\n\n"
@@ -43,19 +21,58 @@ This is a fictional portfolio demonstration for UK financial-services assurance.
 Do not make a legal determination, do not state that a breach definitely occurred,
 and do not calculate or instruct redress. Distinguish evidence from inference.
 Where information is missing, say that it is missing. Final judgement is human-led.
+
+The case may include reviewer-entered fields and extracted text from uploaded
+fictional/anonymised evidence. Treat those as the only case evidence. Never invent
+a call, contact, vulnerability indicator, affordability assessment or support action.
 """
+
+
+class EvidenceRef(BaseModel):
+    source: str
+    evidence: str
+
+
+class AssuranceFinding(BaseModel):
+    area: str
+    severity: Literal["low", "medium", "high"]
+    issue: str
+    why_it_matters: str
+    reviewer_action: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+    fca_reference: str | None = None
+    fca_url: str | None = None
+    fos_example: str | None = None
+    fos_url: str | None = None
+
+
+class JourneyStep(BaseModel):
+    stage: str
+    status: Literal["Positive", "Concern", "Gap", "Not evidenced"]
+    event: str
+    evidence_source: str
+
+
+class AssuranceResult(BaseModel):
+    case_summary: str
+    recommendation: Literal["Pass", "Further Work", "Escalate"]
+    rationale: str
+    agents_consulted: list[str] = Field(default_factory=list)
+    decision_drivers: list[str] = Field(default_factory=list)
+    customer_journey: list[JourneyStep] = Field(default_factory=list)
+    findings: list[AssuranceFinding] = Field(default_factory=list)
+    evidence_to_obtain: list[str] = Field(default_factory=list)
+    human_review_note: str
 
 
 affordability_agent = Agent(
     name="Affordability Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Review only affordability and financial-difficulty evidence.
-Apply the affordability principles in the curated grounding pack before using
-general reasoning.
-Ask whether the proposed arrangement appears evidenced as sustainable,
-whether income/expenditure or equivalent evidence is present, and whether
-temporary or changing circumstances have been reflected. Return concise findings.
+Review affordability and financial-difficulty evidence. Check whether any arrangement
+appears evidenced as sustainable, whether income/expenditure or equivalent evidence
+is present, and whether temporary or changing circumstances were reflected. Trace
+material findings to a supplied field or uploaded filename.
 """,
 )
 
@@ -63,12 +80,9 @@ vulnerability_agent = Agent(
     name="Vulnerability and Support Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Review vulnerability, support needs and communication preferences.
-Apply the vulnerability/support principles in the curated grounding pack before
-using general reasoning.
-Check whether identified needs appear reflected in the actions taken, whether
-contact preferences have been considered, and whether support looks customer-specific.
-Return concise findings and clearly separate fact from inference.
+Review vulnerability, support needs and communication preferences across the supplied
+journey evidence. Check whether identified needs were reflected in actions and contact.
+Trace material findings to the supplied field or uploaded filename.
 """,
 )
 
@@ -76,11 +90,9 @@ evidence_agent = Agent(
     name="Evidence Challenge Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Challenge the quality of the case evidence and agent rationale.
-Apply the evidence/rationale principles in the curated grounding pack.
-Look for contradictions, unsupported conclusions, generic reasoning, missing
-evidence, and cases where 'the customer agreed' is treated as proof of a fair outcome.
-Return concise assurance findings and suggested reviewer actions.
+Challenge evidence quality and reviewer rationale. Look for contradictions,
+unsupported conclusions, missing evidence and cases where customer agreement is
+treated as proof of a fair outcome. Trace findings to supplied evidence.
 """,
 )
 
@@ -88,16 +100,9 @@ fos_examples_agent = Agent(
     name="FOS Illustrative Example Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Use only the published FOS examples contained in the curated grounding pack.
-Identify an example only where it genuinely helps a human reviewer understand an
-evidence or customer-treatment theme in the current case.
-
-Never treat an FOS example as an FCA rule, binding precedent, proof of unfairness,
-or a reason that another case must have the same outcome. Explain the factual theme
-that makes the example relevant. If none of the curated examples is meaningfully
-similar, say so and do not invent one.
-
-Return the exact example name and exact source URL from the grounding pack.
+Use only published FOS examples in the curated grounding pack. Identify one only
+where it genuinely helps a human reviewer understand an evidence or treatment theme.
+It is illustrative, fact-specific and non-binding. Return the exact example and URL.
 """,
 )
 
@@ -105,35 +110,8 @@ regulatory_agent = Agent(
     name="Regulatory Reference Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-Use the curated FCA reference points in the grounding pack first.
-Identify relevant public FCA rules or guidance for the case and give the most
-specific reference you can support. Prefer the approved source list below.
-Do not invent rule numbers, quotes or URLs. If the facts do not support a precise
-provision, use the broader section or guidance and say it requires human verification.
-
-APPROVED FCA REFERENCE MAP:
-- CONC 7.3.4 / 7.3.4B — forbearance, due consideration and individual circumstances
-  https://handbook.fca.org.uk/handbook/conc7/conc7s3
-- CONC 7.3.5 / 7.3.5I — examples of forbearance and keeping support appropriate
-  https://handbook.fca.org.uk/handbook/conc7/conc7s3
-- CONC 7.3.7A — free money guidance / debt-advice support where appropriate
-  https://handbook.fca.org.uk/handbook/conc7/conc7s3
-- CONC 7.3.13A — clear communications taking account of individual circumstances
-  https://handbook.fca.org.uk/handbook/conc7/conc7s3
-- CONC 7.2.1 / 7.2.2A — policies for fair treatment of vulnerable customers and FG21/1
-  https://handbook.fca.org.uk/handbook/conc7/conc7s2
-- FG21/1 — FCA Guidance for firms on the fair treatment of vulnerable customers
-  https://www.fca.org.uk/publication/finalised-guidance/fg21-1.pdf
-- PRIN 2A.2.8 — Consumer Duty: avoid causing foreseeable harm
-  https://handbook.fca.org.uk/handbook/prin2a
-- PRIN 2A.6 — Consumer Duty: consumer support outcome
-  https://handbook.fca.org.uk/handbook/prin2a/prin2as6
-
-When you provide a regulatory point to the lead agent, include BOTH:
-1. the exact reference label; and
-2. the matching URL from this approved list.
-
-Treat these as references for a human reviewer to verify, not as proof of breach.
+Use the curated FCA references in the grounding pack. Do not invent rule numbers,
+quotes or URLs. Treat them as references for human verification, not proof of breach.
 """,
 )
 
@@ -141,43 +119,56 @@ lead_agent = Agent(
     name="Lead Consumer Duty Assurance Agent",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
-You are the lead assurance agent. Review a completed collections/recoveries case.
+Review the fictional Collections & Recoveries case as a customer journey, not just
+as isolated text fields. Decide which specialist agents are useful and reconcile
+their outputs into one assurance result.
 
-Decide which specialist agents are useful, call them as tools, reconcile their
-outputs and produce a single structured assurance result.
+CUSTOMER JOURNEY
+Build a chronological or logical customer journey from supplied evidence. Include
+stages where relevant such as:
+- financial difficulty identified
+- vulnerability / life event identified
+- communication preference / support need recorded
+- affordability assessment
+- payment arrangement / forbearance
+- subsequent contact
+- wider support / signposting
+- customer outcome
+Use Positive, Concern, Gap or Not evidenced. Do not invent dates or events.
 
-Use the curated assurance framework as the primary basis for Pass / Further Work /
-Escalate.
+EVIDENCE TRACEABILITY
+Every material finding must include evidence_refs. Source must be one of these exact
+field labels or an uploaded filename:
+Customer circumstances
+Call / interaction notes
+Vulnerability / support needs
+Actions taken
+Agent final rationale
+Evidence must be a short excerpt or faithful paraphrase of supplied content.
 
-When a case contains clear financial difficulty plus a vulnerability/life-event
-indicator or an unmet communication preference, consult BOTH the regulatory
-reference specialist and the FOS illustrative-example specialist so the human
-reviewer can see the relevant grounded sources. Do not force an FCA or FOS source
-where the facts do not support one.
+When financial difficulty appears with vulnerability/life-event or unmet
+communication preference, consult both regulatory and FOS specialists where relevant.
+Do not force a source.
 
-Your job is to identify potential evidence gaps, inconsistencies and customer-
-outcome risks. Do not treat a specialist concern as a proven breach. Recommend:
-- Pass only where the evidence and rationale appear coherent with no material gap;
-- Further Work where evidence or rationale needs clarification;
-- Escalate where there is a potentially significant customer-outcome concern,
-  vulnerability issue, or material contradiction requiring senior review.
+Record only specialists ACTUALLY called:
+- Affordability
+- Vulnerability & Support
+- Evidence Challenge
+- Regulatory Reference
+- FOS Illustrative Example
 
-Keep the output practical for a second-line/QA reviewer and make clear that the
-human reviewer owns the final decision.
+Populate decision_drivers with the 2-3 most material reasons for the recommendation.
 
-For each finding, populate fca_reference and fca_url when a relevant FCA source
-has been identified by the regulatory specialist. Only use URLs supplied by that
-specialist from the approved FCA reference map. Do not fabricate URLs.
+Recommend Pass only where evidence and rationale are coherent; Further Work where
+evidence or rationale needs clarification; Escalate where there is a potentially
+significant customer-outcome, vulnerability or contradiction concern.
 
-Populate fos_example and fos_url only where the FOS illustrative-example specialist
-identified a genuinely relevant published example. The FOS item must be described
-as illustrative and fact-specific, never as a rule, binding precedent or proof of
-the correct outcome.
+Keep output concise, practical and human-led.
 """,
     tools=[
         affordability_agent.as_tool(
             tool_name="review_affordability",
-            tool_description="Review affordability and financial-difficulty evidence in the case.",
+            tool_description="Review affordability and financial-difficulty evidence.",
         ),
         vulnerability_agent.as_tool(
             tool_name="review_vulnerability_support",
@@ -185,15 +176,15 @@ the correct outcome.
         ),
         evidence_agent.as_tool(
             tool_name="challenge_evidence_and_rationale",
-            tool_description="Challenge evidence quality, inconsistencies and unsupported rationale.",
+            tool_description="Challenge evidence quality and unsupported rationale.",
         ),
         regulatory_agent.as_tool(
             tool_name="identify_regulatory_references",
-            tool_description="Identify relevant FCA/Consumer Duty/CONC references for human verification.",
+            tool_description="Identify relevant FCA / Consumer Duty / CONC references.",
         ),
         fos_examples_agent.as_tool(
             tool_name="identify_fos_illustrative_examples",
-            tool_description="Identify relevant published FOS examples as non-binding, fact-specific illustrations.",
+            tool_description="Identify relevant published FOS illustrative examples.",
         ),
     ],
     output_type=AssuranceResult,
@@ -201,14 +192,23 @@ the correct outcome.
 
 
 async def run_assurance(case: dict) -> AssuranceResult:
+    uploaded = case.get("uploaded_evidence", "")
     prompt = """
 Review the following fictional Collections & Recoveries case.
 
-You should use the specialist tools where they add value. The final output must
-be an assurance recommendation for a human reviewer, not a customer decision.
+Use specialist tools where they add value. The final output is an assurance
+recommendation for a human reviewer, not a customer decision.
 
-CASE:
-""" + json.dumps(case, indent=2)
+CASE FIELDS:
+""" + json.dumps({k: v for k, v in case.items() if k != "uploaded_evidence"}, indent=2)
 
-    result = await Runner.run(lead_agent, prompt, max_turns=12)
+    if uploaded.strip():
+        prompt += """
+
+UPLOADED JOURNEY EVIDENCE:
+File boundaries are labelled. Use those filenames exactly when citing evidence.
+
+""" + uploaded
+
+    result = await Runner.run(lead_agent, prompt, max_turns=16)
     return result.final_output
