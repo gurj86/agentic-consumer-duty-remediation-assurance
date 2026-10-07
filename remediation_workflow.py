@@ -21,7 +21,16 @@ This is a fictional UK financial-services remediation portfolio demonstration.
 Do not make legal determinations, final regulatory conclusions, scheme eligibility
 decisions or real compensation instructions. Distinguish evidence from inference.
 Final judgement and remediation governance remain human-led.
+
+The case may include reviewer-entered fields and extracted text from uploaded
+fictional/anonymised evidence files. Treat those as the only case evidence.
+Never claim a document contains something unless that text is actually supplied.
 """
+
+
+class EvidenceRef(BaseModel):
+    source: str
+    evidence: str
 
 
 class AssuranceFinding(BaseModel):
@@ -30,8 +39,32 @@ class AssuranceFinding(BaseModel):
     issue: str
     why_it_matters: str
     reviewer_action: str
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
     regulatory_reference: str | None = None
     regulatory_url: str | None = None
+
+
+class RiskRating(BaseModel):
+    area: Literal[
+        "Customer Harm",
+        "Population",
+        "Data Lineage",
+        "Redress Methodology",
+        "QA / Outcome Testing",
+        "Governance / Closure",
+    ]
+    rating: Literal["Low", "Medium", "High"]
+    reason: str
+
+
+class RootCauseAnalysis(BaseModel):
+    root_cause: str
+    customer_harm: str
+    population_risk: str
+    data_issue: str
+    methodology_impact: str
+    qa_issue: str
+    closure_risk: str
 
 
 class AssuranceResult(BaseModel):
@@ -40,6 +73,8 @@ class AssuranceResult(BaseModel):
     rationale: str
     agents_consulted: list[str] = Field(default_factory=list)
     decision_drivers: list[str] = Field(default_factory=list)
+    risk_dashboard: list[RiskRating] = Field(default_factory=list)
+    root_cause_analysis: RootCauseAnalysis
     findings: list[AssuranceFinding] = Field(default_factory=list)
     evidence_to_obtain: list[str] = Field(default_factory=list)
     human_review_note: str
@@ -52,7 +87,8 @@ harm_population_agent = Agent(
 Review the definition of customer harm and the affected population. Apply the
 curated customer-harm and population framework. Challenge weak inclusion/exclusion
 criteria, complaint-only populations, untested edge cases and unreconciled totals.
-Return concise findings and practical reviewer actions.
+For any finding, identify the supplied source field or uploaded file and a short
+supporting excerpt or faithful paraphrase.
 """,
 )
 
@@ -64,6 +100,7 @@ data_agent = Agent(
 Review source systems, data fields, transformations, missing records, proxies,
 estimated dates, reconciliations and traceability. Apply the curated data-lineage
 framework. Treat missing data as uncertainty rather than proof of no harm.
+Trace material findings back to the supplied field or uploaded filename.
 """,
 )
 
@@ -75,7 +112,8 @@ redress_agent = Agent(
 Review whether the described redress methodology is logically linked to the harm
 and sufficiently evidenced. Challenge undocumented averages, proxies, timing
 assumptions, inconsistent treatment and unexplained exceptions. Do not calculate
-or instruct real customer compensation.
+or instruct real customer compensation. Trace material findings to supplied
+evidence.
 """,
 )
 
@@ -86,7 +124,7 @@ qa_agent = Agent(
     instructions=BASE_BOUNDARY + """
 Review QA design, sampling, segmentation, exception testing, rework and feedback
 loops. Apply the curated QA framework. Do not assume a high completion rate proves
-that customer outcomes are correct.
+that customer outcomes are correct. Trace material findings to supplied evidence.
 """,
 )
 
@@ -97,7 +135,8 @@ governance_agent = Agent(
     instructions=BASE_BOUNDARY + """
 Review programme governance, unresolved issues, ownership, escalation and closure
 readiness. Challenge closure based primarily on percentage complete, deadlines or
-lack of new complaints where material evidence gaps remain.
+lack of new complaints where material evidence gaps remain. Trace material findings
+to supplied evidence.
 """,
 )
 
@@ -132,6 +171,29 @@ Consider:
 - whether the redress methodology is supported by evidence;
 - whether QA / outcome testing can detect material errors; and
 - whether the programme has enough evidence to support closure.
+
+EVIDENCE TRACEABILITY
+For every material finding, populate evidence_refs with one or more sources from
+the case. Source must be either one of these exact field labels:
+Customer harm / root cause
+Population identification
+Data lineage / evidence
+Redress methodology
+QA / outcome testing
+Governance / proposed closure
+or an uploaded filename exactly as shown in the uploaded evidence text.
+The evidence text must be a short excerpt or faithful paraphrase of supplied
+content. Never invent evidence.
+
+RISK DASHBOARD
+Return exactly one risk rating for each of the six areas. Base the rating on the
+supplied evidence and specialist review, not on arbitrary scoring.
+
+RCA FLOW
+Create a concise root-cause flow that connects the stated root cause to customer
+harm, population risk, data issue, methodology impact, QA issue and closure risk.
+If a stage is not evidenced, explicitly say "Not evidenced in supplied material"
+rather than inventing it.
 
 For material findings with a relevant curated FCA source, consult the regulatory
 specialist and populate regulatory_reference and regulatory_url. Never invent a
@@ -183,6 +245,7 @@ programme-governance reviewer. The human reviewer owns the final decision.
 
 
 async def run_assurance(case: dict) -> AssuranceResult:
+    uploaded = case.get("uploaded_evidence", "")
     prompt = """
 Review the following fictional financial-services remediation programme.
 
@@ -194,8 +257,17 @@ The output is for human remediation assurance / governance review. It is not a
 legal decision, regulatory determination, final methodology approval or payment
 instruction.
 
-PROGRAMME:
-""" + json.dumps(case, indent=2)
+PROGRAMME FIELDS:
+""" + json.dumps({k: v for k, v in case.items() if k != "uploaded_evidence"}, indent=2)
 
-    result = await Runner.run(lead_agent, prompt, max_turns=18)
+    if uploaded.strip():
+        prompt += """
+
+UPLOADED EVIDENCE TEXT:
+The text below was extracted from user-supplied fictional/anonymised files. File
+boundaries are labelled. Cite those filenames exactly when using them as evidence.
+
+""" + uploaded
+
+    result = await Runner.run(lead_agent, prompt, max_turns=20)
     return result.final_output
