@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Governance & Evaluation</title>
+<style>
+:root{--navy:#0d1831;--blue:#315fd5;--bg:#f4f7fb;--line:#dce3ee;--ink:#172033;--muted:#667085;--green:#067647;--red:#b42318;--amber:#8a5200}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:1120px;margin:auto;padding:0 22px}
+header{background:linear-gradient(120deg,#0b1736,#284b80);color:#fff;padding:28px 0 48px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#c2d2ff}h1{font-size:clamp(32px,5vw,50px);line-height:1.05;margin:8px 0 10px}.lead{max-width:900px;color:#e0e9ff;font-size:17px}
+main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 10px 28px rgba(16,24,40,.07);margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}
+.versions{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-block;border:1px solid #cad6ff;background:#f5f7ff;color:#2949a5;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}
+select{width:100%;padding:11px;border:1px solid #cad4e2;border-radius:10px;font:inherit;background:#fff}.actions{display:flex;justify-content:flex-end;margin-top:12px}button{border:0;background:var(--navy);color:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}button:disabled{opacity:.55}
+.status{font-size:13px;color:var(--muted);margin-top:8px}.result{display:none}.result.show{display:block}.pass{color:var(--green)}.fail{color:var(--red)}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.metric{border:1px solid var(--line);border-radius:11px;padding:12px}.metric b{display:block;font-size:22px}.metric span{font-size:12px;color:var(--muted)}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{padding:9px;border:1px solid var(--line);text-align:left;vertical-align:top;font-size:12px}.table th{background:#eef3ff}.ok{color:var(--green);font-weight:800}.bad{color:var(--red);font-weight:800}
+.note{font-size:13px;color:var(--muted)}@media(max-width:800px){.grid,.metric-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.grid,.metric-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div style="max-width:1120px;margin:14px auto 0;padding:0 22px"><a href="/" style="color:#315fd5;font-weight:800;text-decoration:none">← Agentic Assurance Portfolio</a></div>
+<header><div class="wrap"><div class="eyebrow">AI Governance · Evaluation · Human Oversight</div><h1>AI Governance & Evaluation</h1><p class="lead">A controlled benchmark harness for testing the portfolio's agentic workflows against pre-defined fictional cases, expected assurance outcomes and evidence-quality checks.</p></div></header>
+<main class="wrap">
+<section class="card">
+<strong>What this demonstrates</strong>
+<p class="note">The aim is not to claim perfect model accuracy. It shows how agentic workflows can be versioned, tested against controlled cases, measured for evidence traceability and reviewed when the expected and actual outcomes differ.</p>
+<div class="versions" id="versions"></div>
+</section>
+
+<section class="card">
+<h2>Run a controlled benchmark</h2>
+<label for="benchmark"><strong>Benchmark case</strong></label>
+<select id="benchmark"></select>
+<p class="note" id="expected"></p>
+<div class="actions"><button id="run">Run live evaluation</button></div>
+<div class="status" id="status">Each benchmark uses a live agentic review and consumes API usage.</div>
+</section>
+
+<section class="card result" id="result">
+<div class="eyebrow" style="color:#61708a">Evaluation result</div>
+<h2 id="headline">—</h2>
+<p id="summary"></p>
+<div class="metric-grid">
+<div class="metric"><b id="expectedValue">—</b><span>Expected outcome</span></div>
+<div class="metric"><b id="actualValue">—</b><span>Actual outcome</span></div>
+<div class="metric"><b id="traceability">—</b><span>Findings with evidence traceability</span></div>
+<div class="metric"><b id="sourceLinks">—</b><span>Regulatory refs with source links</span></div>
+</div>
+<div class="grid" style="margin-top:12px">
+<div class="stat"><b id="elapsed">—</b><span>Response time</span></div>
+<div class="stat"><b id="findingCount">—</b><span>Findings produced</span></div>
+<div class="stat"><b id="agents">—</b><span>Specialist agents consulted</span></div>
+</div>
+<div style="margin-top:14px"><strong>Decision drivers</strong><ul id="drivers"></ul></div>
+</section>
+
+<section class="card">
+<h2>Recent evaluation audit trail</h2>
+<p class="note">Stored in memory for this portfolio session. It resets when Render restarts or redeploys.</p>
+<div class="table-wrap"><table class="table"><thead><tr><th>Benchmark</th><th>Expected</th><th>Actual</th><th>Match</th><th>Traceability</th><th>Time</th></tr></thead><tbody id="history"></tbody></table></div>
+</section>
+
+<section class="card">
+<h2>Control framework</h2>
+<div class="grid">
+<div class="stat"><b>Human-led</b><span>AI output is advisory; reviewer judgement remains final.</span></div>
+<div class="stat"><b>Versioned</b><span>Workflow, grounding and evaluation harness versions are shown.</span></div>
+<div class="stat"><b>Evidence-led</b><span>Findings are checked for source traceability.</span></div>
+<div class="stat"><b>Benchmarkable</b><span>Expected outcomes are defined before the model runs.</span></div>
+<div class="stat"><b>Auditable</b><span>Expected vs actual results and response time are logged.</span></div>
+<div class="stat"><b>Escalatable</b><span>Mismatches are visible for human investigation, not hidden.</span></div>
+</div>
+</section>
+</main>
+<script>
+let benchmarks=[];
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+async function loadBenchmarks(){
+ const res=await fetch("/api/evaluation/benchmarks",{cache:"no-store"});const data=await res.json();
+ benchmarks=data.benchmarks||[];
+ document.getElementById("versions").innerHTML='<span class="chip">Workflow v'+esc(data.versions.workflow)+'</span><span class="chip">Grounding '+esc(data.versions.grounding_pack)+'</span><span class="chip">Evaluation Harness v'+esc(data.versions.evaluation_harness)+'</span>';
+ document.getElementById("benchmark").innerHTML=benchmarks.map(b=>'<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>').join("");
+ showExpected();
+}
+function showExpected(){
+ const id=document.getElementById("benchmark").value,b=benchmarks.find(x=>x.id===id);
+ if(b)document.getElementById("expected").textContent="Expected: "+b.expected_recommendation+" — "+b.why_expected;
+}
+document.getElementById("benchmark").onchange=showExpected;
+document.getElementById("run").onclick=async()=>{
+ const id=document.getElementById("benchmark").value,btn=document.getElementById("run"),status=document.getElementById("status");
+ btn.disabled=true;status.textContent="Running live benchmark through the agentic workflow…";
+ try{
+  const res=await fetch("/api/evaluation/run/"+encodeURIComponent(id),{method:"POST"});const data=await res.json();if(!res.ok)throw new Error(data.detail||"Evaluation failed");
+  const e=data.evaluation;
+  document.getElementById("headline").textContent=e.recommendation_match?"Benchmark matched expected outcome":"Benchmark requires human investigation";
+  document.getElementById("headline").className=e.recommendation_match?"pass":"fail";
+  document.getElementById("summary").textContent=data.output_summary.rationale||"";
+  document.getElementById("expectedValue").textContent=e.expected_recommendation;
+  document.getElementById("actualValue").textContent=e.actual_recommendation;
+  document.getElementById("traceability").textContent=e.evidence_traceability_rate+"%";
+  document.getElementById("sourceLinks").textContent=e.regulatory_source_link_rate+"%";
+  document.getElementById("elapsed").textContent=e.elapsed_seconds+"s";
+  document.getElementById("findingCount").textContent=e.finding_count;
+  document.getElementById("agents").textContent=(data.output_summary.agents_consulted||[]).length;
+  document.getElementById("drivers").innerHTML=(data.output_summary.decision_drivers||[]).map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>No material decision drivers returned.</li>";
+  document.getElementById("result").classList.add("show");
+  status.textContent="Evaluation complete.";
+  loadHistory();
+ }catch(e){status.textContent=e.message}
+ finally{btn.disabled=false}
+};
+async function loadHistory(){
+ const res=await fetch("/api/evaluation/history",{cache:"no-store"});const data=await res.json();const rows=data.runs||[];
+ document.getElementById("history").innerHTML=rows.length?rows.map(r=>'<tr><td>'+esc(r.benchmark_name)+'</td><td>'+esc(r.expected_recommendation)+'</td><td>'+esc(r.actual_recommendation)+'</td><td class="'+(r.recommendation_match?"ok":"bad")+'">'+(r.recommendation_match?"Match":"Review")+'</td><td>'+esc(r.evidence_traceability_rate)+'%</td><td>'+esc(r.elapsed_seconds)+'s</td></tr>').join(""):'<tr><td colspan="6">No evaluation runs recorded since the last restart.</td></tr>';
+}
+loadBenchmarks();loadHistory();
+</script>
+</body>
+</html>
