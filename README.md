@@ -21,13 +21,17 @@ than relying only on general model knowledge. The pack contains:
   Collections & Recoveries prototype;
 - affordability, vulnerability, communication and evidence-quality challenge
   principles; and
-- selected FCA / CONC / Consumer Duty reference points for human verification.
+- selected FCA / CONC / Consumer Duty reference points for human verification; and
+- a small set of published FOS examples used only as fact-specific illustrations,
+  not as rules or binding precedent.
 
 The agents are instructed to use this curated material first and to state when the
 knowledge pack does not support a precise conclusion.
 
 This is still a portfolio demonstration. It is **not** connected to a live FCA
-Handbook feed, FOS decision database, employer methodology or customer systems.
+Handbook feed or live FOS decision database. The FOS material is a small curated
+set of published examples embedded in the knowledge pack. It is also not connected
+to an employer methodology or customer systems.
 Those would be further production-style grounding layers.
 
 ## Why this is agentic
