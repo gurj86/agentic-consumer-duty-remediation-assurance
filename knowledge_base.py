@@ -3,7 +3,9 @@ Curated grounding material for the Consumer Duty / Collections assurance demo.
 
 This is intentionally small and controlled. It contains:
 1. the portfolio assurance framework used by the older rule-based prototype; and
-2. selected public FCA reference points used for human verification.
+2. selected public FCA reference points used for human verification; and
+3. selected published Financial Ombudsman Service examples used only as
+   illustrations of evidence and fair-treatment themes.
 
 It is not a substitute for a firm's approved methodology, current Handbook review,
 legal advice, or a complete regulatory knowledge base.
@@ -86,4 +88,56 @@ Consumer Duty where applicable.
 Source: https://handbook.fca.org.uk/handbook/conc7
 """
 
-GROUNDING_PACK = ASSURANCE_FRAMEWORK + "\n\n" + FCA_REFERENCE_KNOWLEDGE
+FOS_EXAMPLE_KNOWLEDGE = """
+PUBLISHED FOS EXAMPLES — ILLUSTRATIVE ONLY, NOT BINDING PRECEDENT
+
+FOS vulnerability approach
+The Financial Ombudsman Service says it considers the evidence from the consumer,
+business and relevant third parties, the law/regulations/codes that applied, whether
+the business knew or should have known the consumer was vulnerable, and what help
+or support was offered or provided.
+Source:
+https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/complaints/vulnerability
+
+Maureen — grieving customer / vulnerability and repeated contact
+Published FOS case study. The consumer said she was grieving and did not feel ready
+to make financial decisions. FOS considered that the business had enough information
+to recognise vulnerability and should have treated her fairly. This example is useful
+for assurance themes around recognising bereavement, adapting treatment and avoiding
+process-led pressure. It is not a rule and must not be treated as determinative of
+another case.
+Source:
+https://www.financial-ombudsman.org.uk/businesses/resolving-complaint/case-studies/grieving-maureen-felt-pressured-buying-life-assurance
+
+Glenn — collections communication / unexplained account action
+Published FOS case study. The business had concerns about long-standing debt and was
+entitled to take some account action, but FOS criticised failures to respond to the
+customer's repayment proposals and failures to communicate important actions clearly.
+This example is useful for assurance themes around responding to customer proposals,
+clear communication and the impact of collections actions. It is not a rule and is
+fact-specific.
+Source:
+https://www.financial-ombudsman.org.uk/businesses/resolving-complaint/case-studies/bank-transferred-money-but-didnt-tell-me
+
+DRN-5852156 — affordability / vulnerability evidence
+Published ombudsman decision concerning allegations of irresponsible lending,
+unaffordability, vulnerability and collections treatment. Use only as an example that
+affordability and vulnerability can require evidence-led consideration; do not infer
+that its outcome applies to another customer.
+Source:
+https://www.financial-ombudsman.org.uk/decision/DRN-5852156.pdf
+
+USAGE RULE
+FOS examples are not FCA rules and are not binding precedent for this demo. They may
+only be cited as illustrative examples of how evidence or customer-treatment issues
+have been considered. Never say that a case must have the same outcome because it
+resembles one of these examples.
+"""
+
+GROUNDING_PACK = (
+    ASSURANCE_FRAMEWORK
+    + "\n\n"
+    + FCA_REFERENCE_KNOWLEDGE
+    + "\n\n"
+    + FOS_EXAMPLE_KNOWLEDGE
+)
