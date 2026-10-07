@@ -1,67 +1,246 @@
-# Agentic AI Consumer Duty & Remediation Assurance
+# Agentic Financial Services Assurance Portfolio
 
-A portfolio demonstration of a **multi-agent assurance workflow** for UK financial-services collections and remediation.
+A live portfolio demonstrating how **multi-agent AI workflows** can support assurance, remediation and quality review in UK financial services while keeping the final decision with a human reviewer.
 
-The initial use case is **Collections & Recoveries**. A lead assurance agent can call specialist agents to review:
+The portfolio currently includes three agentic assurance workflows plus a governance and evaluation layer:
+
+- **Consumer Duty / Collections Assurance**
+- **Motor Finance Remediation Assurance**
+- **Redress & Remediation Programme Assurance**
+- **AI Governance & Evaluation Dashboard**
+
+All scenarios are fictional or anonymised portfolio examples. The project is not connected to live customer systems and is not intended to make legal, regulatory, eligibility or compensation decisions.
+
+---
+
+## What this portfolio demonstrates
+
+The aim is to show more than a single LLM reviewing a case.
+
+Each workflow uses a **lead-agent / specialist-agent model**. The lead agent reads the case, decides which specialist reviewers are needed, calls them as tools, reconciles their findings and produces a structured recommendation for human review.
+
+The portfolio demonstrates:
+
+- multi-agent orchestration using the OpenAI Agents SDK;
+- specialist reviewer roles rather than one general-purpose prompt;
+- evidence-led reasoning and source traceability;
+- controlled FCA / FOS grounding for human verification;
+- document-evidence extraction from fictional or anonymised files;
+- human-in-the-loop decisioning;
+- downloadable assurance reporting;
+- benchmark testing, versioning and evaluation controls; and
+- clear boundaries between AI recommendation and human judgement.
+
+---
+
+## 1. Consumer Duty & Collections Assurance
+
+A customer-journey assurance workflow for collections and recoveries cases.
+
+The lead agent can coordinate specialist reviews covering:
 
 - affordability and financial difficulty;
-- vulnerability and customer support;
-- communication preferences and customer-specific treatment;
-- evidence gaps and rationale quality; and
-- relevant FCA / CONC considerations.
+- vulnerability and support needs;
+- communication preferences;
+- evidence quality and reviewer rationale;
+- FCA / CONC reference points; and
+- selected FOS examples used only as fact-specific illustrations.
 
-The system then produces a structured assurance recommendation for **human review**.
+The workflow can also reconstruct the customer journey and highlight where treatment appears supported, unclear or not evidenced.
 
-## Grounded assurance knowledge
+**Example flow**
 
-The agentic workflow is now grounded in a small, controlled knowledge pack rather
-than relying only on general model knowledge. The pack contains:
+Customer circumstances → Financial difficulty → Vulnerability / support → Affordability → Contact treatment → Outcome → Human review
 
-- the portfolio assurance principles carried across from the earlier rule-based
-  Collections & Recoveries prototype;
-- affordability, vulnerability, communication and evidence-quality challenge
-  principles; and
-- selected FCA / CONC / Consumer Duty reference points for human verification; and
-- a small set of published FOS examples used only as fact-specific illustrations,
-  not as rules or binding precedent.
+**Key features**
 
-The agents are instructed to use this curated material first and to state when the
-knowledge pack does not support a precise conclusion.
+- customer-journey reconstruction;
+- evidence uploads;
+- source-linked findings;
+- affordability and vulnerability challenge;
+- FCA / FOS grounding;
+- Pass / Further Work / Escalate recommendation;
+- human reviewer override; and
+- PDF assurance report.
 
-This is still a portfolio demonstration. It is **not** connected to a live FCA
-Handbook feed or live FOS decision database. The FOS material is a small curated
-set of published examples embedded in the knowledge pack. It is also not connected
-to an employer methodology or customer systems.
-Those would be further production-style grounding layers.
+---
 
-## Why this is agentic
+## 2. Motor Finance Remediation Assurance
 
-This project is different from a fixed rule-based dashboard. It uses the OpenAI Agents SDK so a lead agent can decide which specialist agents to call, use their findings, reconcile different issues and produce a final assurance summary.
+An agreement and evidence-pack assurance workflow for motor-finance commission remediation.
 
-The architecture follows a manager-style orchestration pattern:
+The lead agent can coordinate specialist reviews covering:
 
-1. **Lead Assurance Agent** receives the fictional case.
-2. It decides which specialist reviews are needed.
-3. It can call the **Affordability Agent**, **Vulnerability & Support Agent**, **Evidence Challenge Agent** and **Regulatory Reference Agent** as tools.
-4. It combines the specialist outputs into a single assurance result.
-5. A human reviewer makes the final decision: Pass / Further Work / Escalate.
+- commission evidence;
+- arrangement classification;
+- DCA evidence;
+- disclosure and customer evidence;
+- redress / methodology assurance;
+- evidence challenge;
+- FCA / CONRED / CONC references; and
+- selected FOS motor-finance examples.
 
-## Important boundary
+The workflow is designed to distinguish between what the evidence actually establishes and what still requires further investigation.
 
-This is a personal portfolio prototype using fictional data only.
+**Example flow**
 
-It does **not**:
-- make regulatory or legal decisions;
-- determine customer redress;
-- replace approved firm methodology;
-- replace human QA or compliance judgement; or
-- contain real customer or employer information.
+Agreement → Commission evidence → Arrangement type → Disclosure → Customer evidence → Scheme pathway → Assurance outcome
 
-The agent output is a review aid. The human reviewer remains accountable for the final outcome.
+**Key features**
 
-## Model choice and cost
+- agreement and evidence-pack upload;
+- evidence sufficiency matrix;
+- Confirmed / Unclear / Missing statuses;
+- source traceability;
+- DCA and commission challenge;
+- regulatory grounding;
+- human review; and
+- PDF assurance report.
 
-The prototype explicitly uses **GPT-6 Luna** for the lead and specialist agents. It is OpenAI's most cost-efficient current model for focused, high-volume tasks and supports function calling and structured outputs, which fit this workflow well. This keeps testing costs low without changing the multi-agent design.
+---
+
+## 3. Redress & Remediation Programme Assurance
+
+A programme-level assurance workflow designed to challenge whether a remediation exercise is genuinely ready for closure.
+
+The specialist agents review:
+
+- customer harm and root cause;
+- population identification;
+- data lineage and evidence;
+- redress methodology;
+- QA and outcome testing;
+- governance and closure readiness; and
+- regulatory reference points.
+
+This moves the use case beyond reviewing a single customer file and into **remediation programme assurance**.
+
+**Key features**
+
+- programme-level risk assessment;
+- evidence uploads and traceability;
+- population challenge;
+- data-lineage review;
+- redress-methodology challenge;
+- QA / outcome-testing review;
+- RCA visualisation;
+- closure-governance challenge;
+- risk dashboard; and
+- PDF assurance reporting.
+
+---
+
+## 4. AI Governance & Evaluation Dashboard
+
+The Evaluation & Control Dashboard tests the existing agentic workflows rather than replacing them.
+
+It runs controlled fictional benchmark cases where the expected outcome is defined **before** the model is called. The dashboard then compares the live agentic result against that expected outcome.
+
+It measures:
+
+- expected vs actual recommendation;
+- evidence-traceability rate;
+- regulatory-source-link coverage;
+- response time;
+- number of findings;
+- specialist agents consulted;
+- workflow / grounding / evaluation versions; and
+- recent benchmark history.
+
+A mismatch is not hidden or treated as a failure to be ignored. It is surfaced for **human investigation**.
+
+This demonstrates a basic AI-governance principle:
+
+> Build the workflow, test it, measure it, challenge it and keep the final judgement with a human reviewer.
+
+---
+
+## How the agents work together
+
+The architecture uses a manager-style orchestration pattern:
+
+1. The **Lead Agent** receives the fictional case.
+2. It decides which specialist reviewers are relevant.
+3. Specialist agents assess the case from their own area of expertise.
+4. Their findings are returned to the lead agent.
+5. The lead agent reconciles the evidence and produces one structured recommendation.
+6. A human reviewer decides whether to accept, change or escalate the outcome.
+
+The important distinction is that the lead agent does not simply send the same prompt to every specialist. It can choose which specialist tools are useful for the case.
+
+---
+
+## Controlled grounding
+
+The workflows use curated grounding packs containing selected assurance principles and public regulatory reference points.
+
+The agents are instructed to:
+
+- use the controlled grounding material first;
+- distinguish evidence from inference;
+- avoid inventing rule references or source URLs;
+- state when the supplied information does not support a precise conclusion; and
+- treat regulatory and FOS material as reference points for human verification.
+
+The portfolio is **not** connected to a live FCA Handbook feed, live FOS database or employer methodology.
+
+A production implementation would require controlled firm methodology, access controls, validated source data, model governance, security review, audit retention and formal testing.
+
+---
+
+## Evidence and document handling
+
+The portfolio can extract text from fictional or fully anonymised:
+
+- PDF;
+- DOCX;
+- TXT;
+- CSV; and
+- XLSX files.
+
+Uploaded evidence is used to support the current review. The public demo is not intended to be a document-management system.
+
+Do **not** upload:
+
+- real customer information;
+- personal data;
+- confidential employer material; or
+- commercially sensitive case files.
+
+Image-only / scanned PDFs are not supported in the public demo.
+
+---
+
+## Human-in-the-loop design
+
+The AI does not own the final outcome.
+
+Each workflow routes its recommendation to a human reviewer who can decide:
+
+- **Pass**
+- **Further Work**
+- **Escalate**
+
+This is deliberate. The system is positioned as an **assurance and evidence-challenge tool**, not an autonomous regulatory decision-maker.
+
+---
+
+## Technology
+
+The portfolio uses:
+
+- Python;
+- FastAPI;
+- OpenAI Agents SDK;
+- structured Pydantic outputs;
+- HTML / CSS / JavaScript front ends;
+- server-side OpenAI API calls;
+- document extraction for common office formats; and
+- ReportLab PDF reporting.
+
+The public code does not contain an API key. The key is supplied through the server environment.
+
+---
 
 ## Run locally
 
@@ -69,40 +248,56 @@ Requires Python 3.10+ and an OpenAI API key.
 
 ```bash
 python -m venv .venv
-# Windows PowerShell:
-.venv\Scripts\Activate.ps1
-# macOS/Linux:
-source .venv/bin/activate
-
-pip install -r requirements.txt
 ```
-
-Set your API key as an environment variable. **Do not put an API key in the code or commit it to GitHub.**
 
 Windows PowerShell:
 
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 $env:OPENAI_API_KEY="your-key-here"
-```
-
-macOS/Linux:
-
-```bash
-export OPENAI_API_KEY="your-key-here"
-```
-
-Then run:
-
-```bash
 uvicorn app:app --reload
 ```
 
-Open http://127.0.0.1:8000
+Then open:
+
+```text
+http://127.0.0.1:8000
+```
+
+Available routes:
+
+```text
+/consumer-duty
+/motor-finance
+/remediation
+/evaluation
+```
+
+Never place an API key in the source code or commit it to GitHub.
+
+---
 
 ## Portfolio positioning
 
-A simple way to describe this project:
+A concise way to describe the project:
 
-> I designed a multi-agent Consumer Duty and remediation assurance workflow for Collections & Recoveries. A lead agent coordinates specialist reviews across affordability, vulnerability, evidence quality and regulatory considerations, then routes the output to a human reviewer for final judgement.
+> I designed a portfolio of agentic financial-services assurance workflows where lead agents coordinate specialist reviewers across Consumer Duty, motor finance and remediation. The workflows challenge case evidence, use controlled regulatory grounding, trace findings back to source material and route structured recommendations to a human reviewer. I also built an Evaluation & Control Dashboard to benchmark the agents against pre-defined cases and surface mismatches for human investigation.
 
-Built as a non-production demonstration of agentic AI use-case design, financial-services assurance and human-in-the-loop governance.
+This is a **non-production portfolio demonstration** designed to show agentic workflow design, financial-services assurance knowledge, human-in-the-loop controls and AI evaluation principles.
+
+---
+
+## Important boundary
+
+This project does **not**:
+
+- provide legal or regulatory advice;
+- make final customer or compensation decisions;
+- replace approved firm methodology;
+- connect to real customer systems;
+- use real customer or employer data; or
+- represent a production deployment for a client or financial-services firm.
+
+The purpose is to demonstrate how agentic AI could support structured review and assurance while preserving human accountability.
