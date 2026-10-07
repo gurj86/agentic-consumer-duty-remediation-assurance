@@ -5,131 +5,75 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agentic AI Motor Finance Remediation Assurance</title>
 <style>
-:root{--navy:#0b1736;--blue:#315fd5;--bg:#f3f6fb;--card:#fff;--line:#dce3ee;--ink:#172033;--muted:#667085;--amber:#a15c00;--red:#b42318;--green:#16794b;--purple:#6941c6}
+:root{--navy:#0b1736;--blue:#315fd5;--bg:#f3f6fb;--line:#dce3ee;--ink:#172033;--muted:#667085;--amber:#a15c00;--red:#b42318;--green:#16794b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
-header{background:radial-gradient(circle at 80% 0,#284d91 0,transparent 35%),linear-gradient(120deg,#0b1736,#182f60);color:#fff;padding:28px 0 48px}.wrap{max-width:1160px;margin:auto;padding:0 22px}
-.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#b9ccff}h1{font-size:clamp(30px,5vw,48px);line-height:1.06;margin:7px 0 10px}.lead{max-width:850px;color:#dce7ff;font-size:17px}
-main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 10px 28px rgba(16,24,40,.07);margin-bottom:15px}
-.notice{background:#fff7e8;border:1px solid #efcc88;color:#6b4f00}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.step{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfcfe}.step strong{display:block;font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field.full{grid-column:1/-1}label{display:block;font-size:12px;font-weight:800;margin:0 0 5px}textarea{width:100%;min-height:105px;border:1px solid #cad4e2;border-radius:10px;padding:11px;font:inherit;resize:vertical}
-.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
-.results{display:none}.results.show{display:block}.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.finding p{margin:5px 0;color:#475467}.finding a{display:inline-block;margin-top:7px;color:var(--blue);font-weight:800;text-decoration:none}.finding a:hover{text-decoration:underline}
-.badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;background:#eef3ff;color:#234baf}.drivers{background:#fff8eb;border:1px solid #efd29a;border-radius:11px;padding:12px 14px;margin:12px 0}.drivers strong{display:block;margin-bottom:6px}.drivers ul{margin:6px 0 0 20px;padding:0}.agents{background:#f5f7ff;border:1px solid #d9e2ff;border-radius:11px;padding:12px 14px;margin:12px 0}.agents strong{display:block;margin-bottom:7px}.agent-chip{display:inline-block;margin:3px 5px 3px 0;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid #cad6ff;color:#2949a5;font-size:12px;font-weight:800}.human{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}.evidence{background:#fafafa;border:1px dashed #ccd5e2;border-radius:10px;padding:12px;margin-top:12px}
-.decision-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.decision-row button.active{background:var(--navy);color:#fff}.status{font-size:13px;color:var(--muted);margin-top:8px}
-@media(max-width:850px){.flow{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}@media(max-width:560px){.flow{grid-template-columns:1fr}}
+.wrap{max-width:1180px;margin:auto;padding:0 22px}header{background:radial-gradient(circle at 80% 0,#284d91 0,transparent 35%),linear-gradient(120deg,#0b1736,#182f60);color:#fff;padding:28px 0 48px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#b9ccff}h1{font-size:clamp(30px,5vw,48px);line-height:1.06;margin:7px 0 10px}.lead{max-width:900px;color:#dce7ff;font-size:17px}
+main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 10px 28px rgba(16,24,40,.07);margin-bottom:15px}.notice{background:#fff7e8;border:1px solid #efcc88;color:#6b4f00}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.step{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfcfe}.step strong{display:block;font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:12px;font-weight:800;margin-bottom:5px}textarea{width:100%;min-height:105px;border:1px solid #cad4e2;border-radius:10px;padding:11px;font:inherit;resize:vertical}
+.upload{border:1px dashed #aebbd0;border-radius:12px;padding:16px;background:#f8faff;margin-top:16px}.upload small{color:var(--muted)}.file-pill{display:inline-block;margin:5px 6px 0 0;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid #ccd7ea;font-size:12px}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button:disabled{opacity:.55}
+.results{display:none}.results.show{display:block}.badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;background:#eef3ff;color:#234baf}
+.drivers,.agents,.evidence{border-radius:11px;padding:12px 14px;margin:12px 0}.drivers{background:#fff8eb;border:1px solid #efd29a}.agents{background:#f5f7ff;border:1px solid #d9e2ff}.evidence{background:#fafafa;border:1px dashed #ccd5e2}.agent-chip{display:inline-block;margin:4px 5px 0 0;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid #cad6ff;color:#2949a5;font-size:12px;font-weight:800}
+.matrix-wrap{overflow:auto}.matrix{width:100%;border-collapse:collapse;min-width:850px}.matrix th,.matrix td{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top;font-size:12px}.matrix th{background:#eef3ff}.status-pill{display:inline-block;border-radius:999px;padding:3px 7px;font-weight:800}.Confirmed{background:#dcfae6;color:#067647}.Unclear{background:#fff0c2;color:#8a5200}.Missing{background:#fee4e2;color:#b42318}
+.evidence-flow{display:grid;grid-template-columns:repeat(7,minmax(125px,1fr));gap:8px;overflow-x:auto}.flow-node{position:relative;min-width:125px;border:1px solid #d9e2f1;border-radius:12px;padding:11px;background:#f9fbff}.flow-node:not(:last-child)::after{content:"→";position:absolute;right:-10px;top:43%;font-weight:900;color:#7f8ba3}.flow-node b{display:block;font-size:12px;margin-bottom:5px}.flow-node span{font-size:12px;color:#5f6b7a}
+.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.finding p{margin:5px 0;color:#475467}.finding a{color:var(--blue);font-weight:800;text-decoration:none}.trace{background:#f8fafc;border-radius:8px;padding:9px;margin-top:8px;font-size:12px}.source{font-weight:800}
+.human{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}.decision-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.decision-row button.active{background:var(--navy);color:#fff}.status{font-size:13px;color:var(--muted);margin-top:8px}
+@media(max-width:900px){.flow{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}}@media(max-width:560px){.flow{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div style="max-width:1160px;margin:14px auto 0;padding:0 22px"><a href="/" style="color:#315fd5;font-weight:800;text-decoration:none">← Agentic Assurance Portfolio</a></div>
-<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Agentic AI Motor Finance Remediation Assurance</h1><p class="lead">A multi-agent workflow that challenges commission evidence, arrangement classification, disclosure, methodology and reviewer rationale before human sign-off.</p></div></header>
+<body>
+<div style="max-width:1180px;margin:14px auto 0;padding:0 22px"><a href="/" style="color:#315fd5;font-weight:800;text-decoration:none">← Agentic Assurance Portfolio</a></div>
+<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Agentic AI Motor Finance Remediation Assurance</h1><p class="lead">A multi-agent evidence-pack review that challenges agreement terms, commission evidence, DCA classification, disclosure and scheme rationale, then shows exactly what evidence supports each conclusion.</p></div></header>
 <main class="wrap">
-  <div class="card notice"><strong>Fictional data only.</strong> This prototype does not determine liability, final scheme eligibility or real compensation. FCA references must be verified by the human reviewer against the current rules and agreement facts.<br><strong>Privacy:</strong> Use fictional or fully anonymised information only. Do not enter real customer data, personal information or confidential firm material.</div>
+<div class="card notice"><strong>Fictional data only.</strong> This prototype does not determine liability, final scheme eligibility or real compensation. <strong>Privacy:</strong> Do not upload real customer data or confidential firm material.</div>
 
-  <section class="card">
-    <div class="eyebrow" style="color:#61708a">Agentic workflow</div>
-    <h2>How the review works</h2>
-    <div class="flow">
-      <div class="step"><strong>1 · Lead Agent</strong><span>Reads the case and decides which specialist agents are needed.</span></div>
-      <div class="step"><strong>2 · Evidence & Classification</strong><span>Checks commission records and whether the stated arrangement is supported.</span></div>
-      <div class="step"><strong>3 · Disclosure & Methodology</strong><span>Challenges customer evidence, disclosure and the proposed outcome.</span></div>
-      <div class="step"><strong>4 · FCA & Human Review</strong><span>Surfaces FCA references and routes the combined result to a human reviewer.</span></div>
-    </div>
-  </section>
+<section class="card"><div class="eyebrow" style="color:#61708a">Agentic workflow</div><h2>Agreement & evidence pack review</h2><div class="flow">
+<div class="step"><strong>1 · Evidence Intake</strong><span>Agreement, lender extract, commission schedule, disclosure or complaint evidence.</span></div>
+<div class="step"><strong>2 · Lead Agent</strong><span>Chooses which motor-finance specialists to call.</span></div>
+<div class="step"><strong>3 · Evidence Matrix</strong><span>Shows what is confirmed, unclear or missing.</span></div>
+<div class="step"><strong>4 · Evidence Flow</strong><span>Maps agreement → commission → DCA → disclosure → outcome.</span></div>
+<div class="step"><strong>5 · Human / PDF</strong><span>Human signs off and can export the assurance report.</span></div>
+</div></section>
 
-  <section class="card">
-    <h2>Fictional motor-finance case</h2>
-    <div class="form-grid">
-      <div class="field">
-        <label>Agreement details</label>
-        <textarea id="agreement">PCP agreement entered in June 2018 through a motor dealer. Customer financed £18,500 over 48 months.</textarea>
-      </div>
-      <div class="field">
-        <label>Commission evidence</label>
-        <textarea id="commission">A lender data extract records £1,240 commission paid to the dealer. The original commission schedule is not currently in the case file.</textarea>
-      </div>
-      <div class="field">
-        <label>Arrangement classification</label>
-        <textarea id="classification">Case has been classified as a DCA because the lender data extract contains a DCA flag. No document in the case file currently explains the dealer's rate-setting discretion or how commission varied.</textarea>
-      </div>
-      <div class="field">
-        <label>Disclosure / customer evidence</label>
-        <textarea id="disclosure">Customer says they were not told the dealer would receive commission and believed the dealer was recommending the best available finance. The file contains the signed finance agreement but no separate commission disclosure evidence has been identified.</textarea>
-      </div>
-      <div class="field">
-        <label>Proposed outcome</label>
-        <textarea id="outcome">Reviewer proposes placing the case in the illustrative redress cohort based on the DCA flag and recorded commission payment.</textarea>
-      </div>
-      <div class="field">
-        <label>Reviewer rationale</label>
-        <textarea id="rationale">The lender extract identifies DCA and confirms a commission payment. The customer signed the finance agreement, so I consider the evidence sufficient to progress the case without further document retrieval.</textarea>
-      </div>
-    </div>
-    <div class="actions"><button id="reset">Load example</button><button class="primary" id="run">Run Agentic Assurance Review</button></div>
-    <div class="status" id="status">Requires a locally configured OPENAI_API_KEY.</div>
-  </section>
+<section class="card"><h2>Fictional motor-finance case</h2><div class="form-grid">
+<div><label>Agreement details</label><textarea id="agreement">PCP agreement entered in June 2018 through a motor dealer. Customer financed £18,500 over 48 months.</textarea></div>
+<div><label>Commission evidence</label><textarea id="commission">A lender data extract records £1,240 commission paid to the dealer. The original commission schedule is not currently in the case file.</textarea></div>
+<div><label>Arrangement classification</label><textarea id="classification">Case has been classified as a DCA because the lender data extract contains a DCA flag. No document in the case file currently explains the dealer's rate-setting discretion or how commission varied.</textarea></div>
+<div><label>Disclosure / customer evidence</label><textarea id="disclosure">Customer says they were not told the dealer would receive commission and believed the dealer was recommending the best available finance. The file contains the signed finance agreement but no separate commission disclosure evidence has been identified.</textarea></div>
+<div><label>Proposed outcome</label><textarea id="outcome">Reviewer proposes placing the case in the illustrative redress cohort based on the DCA flag and recorded commission payment.</textarea></div>
+<div><label>Reviewer rationale</label><textarea id="rationale">The lender extract identifies DCA and confirms a commission payment. The customer signed the finance agreement, so I consider the evidence sufficient to progress the case without further document retrieval.</textarea></div>
+</div>
+<div class="upload"><strong>Optional agreement / evidence pack upload</strong><br><small>Up to 3 fictional/anonymised files, 2 MB each. PDF, DOCX, TXT, CSV or XLSX. Text-based PDFs only.</small><input id="files" type="file" multiple accept=".pdf,.docx,.txt,.csv,.xlsx"><div class="actions" style="justify-content:flex-start"><button id="extract">Extract evidence</button><button id="clearFiles">Clear evidence</button></div><div class="status" id="uploadStatus">No evidence files loaded.</div><div id="fileList"></div></div>
+<div class="actions"><button id="reset">Load example</button><button class="primary" id="run">Run Agentic Evidence Review</button></div><div class="status" id="status">Live agentic review uses the server-side API connection.</div></section>
 
-  <section class="card results" id="results">
-    <div class="eyebrow" style="color:#61708a">Lead agent output</div>
-    <h2 id="recommendation">—</h2>
-    <span class="badge" id="findingCount">—</span>
-    <p id="summary"></p>
-    <div class="drivers" id="driversBox" style="display:none"><strong id="driversTitle">Why the lead agent chose this outcome</strong><ul id="driversList"></ul></div>
-    <div class="agents" id="agentsBox" style="display:none"><strong>Specialist agents consulted</strong><div id="agentsConsulted"></div></div>
-    <div id="findings"></div>
-    <div class="evidence" id="evidenceBox" style="display:none"><strong>Evidence to obtain / verify</strong><ul id="evidenceList"></ul></div>
-    <div class="human">
-      <strong>Human reviewer decision</strong>
-      <p id="humanNote">Agent output is advisory only.</p>
-      <div class="decision-row"><button data-decision="Pass">Pass</button><button data-decision="Further Work">Further Work</button><button data-decision="Escalate">Escalate</button></div>
-      <div class="status" id="humanDecision">No human decision recorded.</div>
-    </div>
-  </section>
+<section class="card results" id="results">
+<div class="eyebrow" style="color:#61708a">Lead agent output</div><h2 id="recommendation">—</h2><span class="badge" id="findingCount">—</span><p id="summary"></p>
+<div class="drivers" id="driversBox" style="display:none"><strong id="driversTitle"></strong><ul id="driversList"></ul></div>
+<div class="agents" id="agentsBox" style="display:none"><strong>Specialist agents consulted</strong><div id="agentsConsulted"></div></div>
+
+<h3>Evidence Sufficiency Matrix</h3><div class="matrix-wrap"><table class="matrix"><thead><tr><th>Evidence required</th><th>Status</th><th>Source</th><th>Gap / observation</th><th>Agent conclusion</th></tr></thead><tbody id="matrixBody"></tbody></table></div>
+
+<h3>Agreement Evidence Flow</h3><div class="evidence-flow" id="evidenceFlow"></div>
+
+<h3>Detailed findings with source traceability</h3><div id="findings"></div>
+<div class="evidence" id="evidenceBox" style="display:none"><strong>Evidence to obtain / verify</strong><ul id="evidenceList"></ul></div>
+<div class="human"><strong>Human reviewer decision</strong><p id="humanNote"></p><div class="decision-row"><button data-decision="Pass">Pass</button><button data-decision="Further Work">Further Work</button><button data-decision="Escalate">Escalate</button></div><div class="status" id="humanDecision">No human decision recorded.</div></div>
+<div class="actions"><button class="primary" id="pdf">Generate Assurance Report (PDF)</button></div><div class="status" id="pdfStatus"></div>
+</section>
 </main>
 <script>
-const example={
- agreement:"PCP agreement entered in June 2018 through a motor dealer. Customer financed £18,500 over 48 months.",
- commission:"A lender data extract records £1,240 commission paid to the dealer. The original commission schedule is not currently in the case file.",
- classification:"Case has been classified as a DCA because the lender data extract contains a DCA flag. No document in the case file currently explains the dealer's rate-setting discretion or how commission varied.",
- disclosure:"Customer says they were not told the dealer would receive commission and believed the dealer was recommending the best available finance. The file contains the signed finance agreement but no separate commission disclosure evidence has been identified.",
- outcome:"Reviewer proposes placing the case in the illustrative redress cohort based on the DCA flag and recorded commission payment.",
- rationale:"The lender extract identifies DCA and confirms a commission payment. The customer signed the finance agreement, so I consider the evidence sufficient to progress the case without further document retrieval."
-};
+const example={agreement:"PCP agreement entered in June 2018 through a motor dealer. Customer financed £18,500 over 48 months.",commission:"A lender data extract records £1,240 commission paid to the dealer. The original commission schedule is not currently in the case file.",classification:"Case has been classified as a DCA because the lender data extract contains a DCA flag. No document in the case file currently explains the dealer's rate-setting discretion or how commission varied.",disclosure:"Customer says they were not told the dealer would receive commission and believed the dealer was recommending the best available finance. The file contains the signed finance agreement but no separate commission disclosure evidence has been identified.",outcome:"Reviewer proposes placing the case in the illustrative redress cohort based on the DCA flag and recorded commission payment.",rationale:"The lender extract identifies DCA and confirms a commission payment. The customer signed the finance agreement, so I consider the evidence sufficient to progress the case without further document retrieval."};
+let uploadedEvidence="",currentResult=null,humanDecision="Not recorded";
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
-function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v;document.getElementById("results").classList.remove("show")}
+function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v;document.getElementById("results").classList.remove("show");currentResult=null}
 document.getElementById("reset").onclick=loadExample;
-document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("humanDecision").textContent="Human decision recorded: "+b.dataset.decision+" (demo only)."});
-document.getElementById("run").onclick=async()=>{
- const run=document.getElementById("run"),status=document.getElementById("status");run.disabled=true;status.textContent="Lead agent is coordinating specialist motor-finance reviews…";
- const body={
-  agreement_details:document.getElementById("agreement").value,
-  commission_evidence:document.getElementById("commission").value,
-  arrangement_classification:document.getElementById("classification").value,
-  disclosure_customer_evidence:document.getElementById("disclosure").value,
-  proposed_outcome:document.getElementById("outcome").value,
-  reviewer_rationale:document.getElementById("rationale").value
- };
- try{
-  const res=await fetch("/api/motor-finance/review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  const data=await res.json();if(!res.ok)throw new Error(data.detail||"Review failed");
-  document.getElementById("recommendation").textContent=data.recommendation;
-  document.getElementById("findingCount").textContent=data.findings.length+" findings";
-  document.getElementById("summary").textContent=data.case_summary+" "+data.rationale;
-  const drivers=data.escalation_drivers||[];
-  const driversBox=document.getElementById("driversBox");
-  driversBox.style.display=drivers.length?"block":"none";
-  document.getElementById("driversTitle").textContent=data.recommendation==="Escalate"?"Why the lead agent chose Escalate":data.recommendation==="Further Work"?"Why the lead agent chose Further Work":"Why the lead agent chose this outcome";
-  document.getElementById("driversList").innerHTML=drivers.map(x=>"<li>"+esc(x)+"</li>").join("");
-  const agents=data.agents_consulted||[];
-  document.getElementById("agentsBox").style.display=agents.length?"block":"none";
-  document.getElementById("agentsConsulted").innerHTML=agents.map(a=>'<span class="agent-chip">'+esc(a)+'</span>').join("");
-  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(f.fca_reference?'<p><b>FCA reference to verify:</b> '+esc(f.fca_reference)+'</p>':'')+(f.fca_url?'<a href="'+esc(f.fca_url)+'" target="_blank" rel="noreferrer">Open official FCA source →</a>':'')+(f.fos_example?'<p><b>FOS illustrative example:</b> '+esc(f.fos_example)+' <span style="color:#667085">(fact-specific, not binding precedent)</span></p>':'')+(f.fos_url?'<a href="'+esc(f.fos_url)+'" target="_blank" rel="noreferrer">Open published FOS example →</a>':'')+'</div>').join("");
-  const ev=data.evidence_to_obtain||[];document.getElementById("evidenceBox").style.display=ev.length?"block":"none";document.getElementById("evidenceList").innerHTML=ev.map(x=>"<li>"+esc(x)+"</li>").join("");
-  document.getElementById("humanNote").textContent=data.human_review_note;
-  document.getElementById("results").classList.add("show");
-  status.textContent="Agentic review complete. Human decision still required.";
-  document.getElementById("results").scrollIntoView({behavior:"smooth",block:"start"});
- }catch(e){status.textContent=e.message}
- finally{run.disabled=false}
-};
+document.getElementById("clearFiles").onclick=()=>{document.getElementById("files").value="";uploadedEvidence="";document.getElementById("fileList").innerHTML="";document.getElementById("uploadStatus").textContent="No evidence files loaded."};
+document.getElementById("extract").onclick=async()=>{const input=document.getElementById("files"),status=document.getElementById("uploadStatus"),btn=document.getElementById("extract");if(!input.files.length){status.textContent="Choose at least one file first.";return}if(input.files.length>3){status.textContent="Up to 3 files.";return}const form=new FormData();[...input.files].forEach(f=>form.append("files",f));btn.disabled=true;status.textContent="Extracting evidence…";try{const res=await fetch("/api/motor-finance/extract",{method:"POST",body:form});const data=await res.json();if(!res.ok)throw new Error(data.detail||"Extraction failed");uploadedEvidence=data.files.map(f=>"=== FILE: "+f.filename+" ===\n"+f.text).join("\n\n");document.getElementById("fileList").innerHTML=data.files.map(f=>'<span class="file-pill">'+esc(f.filename)+' · '+f.characters+' chars</span>').join("");status.textContent=data.files.length+" file(s) ready for agent review."}catch(e){status.textContent=e.message;uploadedEvidence=""}finally{btn.disabled=false}};
+document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");humanDecision=b.dataset.decision;document.getElementById("humanDecision").textContent="Human decision recorded: "+humanDecision+" (demo only)."});
+document.getElementById("run").onclick=async()=>{const run=document.getElementById("run"),status=document.getElementById("status");run.disabled=true;status.textContent="Lead agent is reviewing the agreement and evidence pack…";const body={agreement_details:document.getElementById("agreement").value,commission_evidence:document.getElementById("commission").value,arrangement_classification:document.getElementById("classification").value,disclosure_customer_evidence:document.getElementById("disclosure").value,proposed_outcome:document.getElementById("outcome").value,reviewer_rationale:document.getElementById("rationale").value,uploaded_evidence:uploadedEvidence};try{const res=await fetch("/api/motor-finance/review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const data=await res.json();if(!res.ok)throw new Error(data.detail||"Review failed");currentResult=data;document.getElementById("recommendation").textContent=data.recommendation;document.getElementById("findingCount").textContent=data.findings.length+" findings";document.getElementById("summary").textContent=data.case_summary+" "+data.rationale;const drivers=data.escalation_drivers||[];document.getElementById("driversBox").style.display=drivers.length?"block":"none";document.getElementById("driversTitle").textContent=data.recommendation==="Escalate"?"Why the lead agent chose Escalate":"Why the lead agent chose "+data.recommendation;document.getElementById("driversList").innerHTML=drivers.map(x=>"<li>"+esc(x)+"</li>").join("");const agents=data.agents_consulted||[];document.getElementById("agentsBox").style.display=agents.length?"block":"none";document.getElementById("agentsConsulted").innerHTML=agents.map(a=>'<span class="agent-chip">'+esc(a)+'</span>').join("");document.getElementById("matrixBody").innerHTML=(data.evidence_matrix||[]).map(r=>'<tr><td>'+esc(r.evidence_required)+'</td><td><span class="status-pill '+esc(r.status)+'">'+esc(r.status)+'</span></td><td>'+esc(r.source)+'</td><td>'+esc(r.gap_or_observation)+'</td><td>'+esc(r.agent_conclusion)+'</td></tr>').join("");const flow=data.agreement_evidence_flow||{};const nodes=[["Agreement",flow.agreement],["Commission",flow.commission_evidence],["Arrangement",flow.arrangement_type],["Disclosure",flow.disclosure],["Customer evidence",flow.customer_evidence],["Scheme pathway",flow.scheme_pathway],["Outcome",flow.assurance_outcome]];document.getElementById("evidenceFlow").innerHTML=nodes.map(n=>'<div class="flow-node"><b>'+esc(n[0])+'</b><span>'+esc(n[1]||"Not evidenced")+'</span></div>').join("");document.getElementById("findings").innerHTML=data.findings.map(f=>{const refs=(f.evidence_refs||[]).map(ev=>'<div><span class="source">'+esc(ev.source)+':</span> '+esc(ev.evidence)+'</div>').join("");return '<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(refs?'<div class="trace"><b>Evidence used</b>'+refs+'</div>':'')+(f.fca_reference?'<p><b>FCA reference to verify:</b> '+esc(f.fca_reference)+'</p>':'')+(f.fca_url?'<a href="'+esc(f.fca_url)+'" target="_blank" rel="noreferrer">Open official FCA source →</a>':'')+(f.fos_example?'<p><b>FOS illustration:</b> '+esc(f.fos_example)+' <span style="color:#667085">(fact-specific, non-binding)</span></p>':'')+(f.fos_url?'<a href="'+esc(f.fos_url)+'" target="_blank" rel="noreferrer">Open published FOS example →</a>':'')+'</div>'}).join("");const ev=data.evidence_to_obtain||[];document.getElementById("evidenceBox").style.display=ev.length?"block":"none";document.getElementById("evidenceList").innerHTML=ev.map(x=>"<li>"+esc(x)+"</li>").join("");document.getElementById("humanNote").textContent=data.human_review_note;document.getElementById("results").classList.add("show");status.textContent="Evidence-pack assurance complete. Human decision still required.";document.getElementById("results").scrollIntoView({behavior:"smooth"})}catch(e){status.textContent=e.message}finally{run.disabled=false}};
+document.getElementById("pdf").onclick=async()=>{const s=document.getElementById("pdfStatus");if(!currentResult){s.textContent="Run the review first.";return}s.textContent="Generating PDF…";const res=await fetch("/api/motor-finance/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({result:currentResult,human_decision:humanDecision})});if(!res.ok){s.textContent="PDF generation failed.";return}const blob=await res.blob(),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="motor-finance-assurance-report.pdf";a.click();URL.revokeObjectURL(url);s.textContent="PDF assurance report generated."};
 </script>
 </body>
 </html>
