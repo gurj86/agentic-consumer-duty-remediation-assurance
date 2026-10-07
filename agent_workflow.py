@@ -4,6 +4,8 @@ from typing import Literal
 from agents import Agent, Runner
 from pydantic import BaseModel, Field
 
+from knowledge_base import GROUNDING_PACK
+
 MODEL = "gpt-6-luna"
 
 
@@ -26,7 +28,15 @@ class AssuranceResult(BaseModel):
     human_review_note: str
 
 
-BASE_BOUNDARY = """
+GROUNDING_INSTRUCTION = """
+Use the curated grounding pack below as the primary assurance framework for this
+portfolio demo. Do not contradict it with general model knowledge. If the pack
+does not support a precise regulatory conclusion, say that human verification is
+required rather than filling the gap from memory.
+
+""" + GROUNDING_PACK + "\n\n"
+
+BASE_BOUNDARY = GROUNDING_INSTRUCTION + """
 This is a fictional portfolio demonstration for UK financial-services assurance.
 Do not make a legal determination, do not state that a breach definitely occurred,
 and do not calculate or instruct redress. Distinguish evidence from inference.
@@ -39,6 +49,8 @@ affordability_agent = Agent(
     model=MODEL,
     instructions=BASE_BOUNDARY + """
 Review only affordability and financial-difficulty evidence.
+Apply the affordability principles in the curated grounding pack before using
+general reasoning.
 Ask whether the proposed arrangement appears evidenced as sustainable,
 whether income/expenditure or equivalent evidence is present, and whether
 temporary or changing circumstances have been reflected. Return concise findings.
@@ -50,6 +62,8 @@ vulnerability_agent = Agent(
     model=MODEL,
     instructions=BASE_BOUNDARY + """
 Review vulnerability, support needs and communication preferences.
+Apply the vulnerability/support principles in the curated grounding pack before
+using general reasoning.
 Check whether identified needs appear reflected in the actions taken, whether
 contact preferences have been considered, and whether support looks customer-specific.
 Return concise findings and clearly separate fact from inference.
@@ -61,6 +75,7 @@ evidence_agent = Agent(
     model=MODEL,
     instructions=BASE_BOUNDARY + """
 Challenge the quality of the case evidence and agent rationale.
+Apply the evidence/rationale principles in the curated grounding pack.
 Look for contradictions, unsupported conclusions, generic reasoning, missing
 evidence, and cases where 'the customer agreed' is treated as proof of a fair outcome.
 Return concise assurance findings and suggested reviewer actions.
@@ -71,6 +86,7 @@ regulatory_agent = Agent(
     name="Regulatory Reference Specialist",
     model=MODEL,
     instructions=BASE_BOUNDARY + """
+Use the curated FCA reference points in the grounding pack first.
 Identify relevant public FCA rules or guidance for the case and give the most
 specific reference you can support. Prefer the approved source list below.
 Do not invent rule numbers, quotes or URLs. If the facts do not support a precise
@@ -111,7 +127,8 @@ You are the lead assurance agent. Review a completed collections/recoveries case
 Decide which specialist agents are useful, call them as tools, reconcile their
 outputs and produce a single structured assurance result.
 
-Your job is to identify potential evidence gaps, inconsistencies and customer-
+Use the curated assurance framework as the primary basis for Pass / Further Work /
+Escalate. Your job is to identify potential evidence gaps, inconsistencies and customer-
 outcome risks. Do not treat a specialist concern as a proven breach. Recommend:
 - Pass only where the evidence and rationale appear coherent with no material gap;
 - Further Work where evidence or rationale needs clarification;
