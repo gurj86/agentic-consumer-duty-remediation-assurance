@@ -1,10 +1,21 @@
+import csv
+import io
 import os
 import time
 from collections import defaultdict, deque
+from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from docx import Document
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.responses import HTMLResponse, Response
+from openpyxl import load_workbook
 from pydantic import BaseModel
+from pypdf import PdfReader
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.units import mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
 
 from agent_workflow import run_assurance as run_consumer_duty_assurance
 from motor_finance_workflow import run_assurance as run_motor_finance_assurance
@@ -13,9 +24,13 @@ from remediation_workflow import run_assurance as run_remediation_assurance
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
 
-MAX_FIELD_CHARS = 4000
+MAX_FIELD_CHARS = 12000
 RATE_LIMIT = 8
 RATE_WINDOW_SECONDS = 3600
+MAX_UPLOAD_BYTES = 2 * 1024 * 1024
+MAX_UPLOAD_FILES = 3
+MAX_EXTRACTED_CHARS_PER_FILE = 18000
+ALLOWED_UPLOAD_EXTENSIONS = {".pdf", ".docx", ".txt", ".csv", ".xlsx"}
 _requests_by_ip: dict[str, deque[float]] = defaultdict(deque)
 
 
@@ -43,6 +58,7 @@ class RemediationProgrammeInput(BaseModel):
     redress_methodology: str
     qa_outcome_testing: str
     governance_closure: str
+    uploaded_evidence: str = ""
 
 
 def _client_ip(request: Request) -> str:
@@ -83,6 +99,210 @@ def _require_api_key() -> None:
         )
 
 
+def _extract_pdf(data: bytes) -> str:
+    reader = PdfReader(io.BytesIO(data))
+    parts = []
+    for index, page in enumerate(reader.pages[:40], start=1):
+        text = page.extract_text() or ""
+        if text.strip():
+            parts.append(f"[Page {index}]\n{text.strip()}")
+    return "\n\n".join(parts)
+
+
+def _extract_docx(data: bytes) -> str:
+    doc = Document(io.BytesIO(data))
+    paragraphs = [p.text.strip() for p in doc.paragraphs if p.text.strip()]
+    for table_index, table in enumerate(doc.tables[:20], start=1):
+        paragraphs.append(f"[Table {table_index}]")
+        for row in table.rows[:100]:
+            paragraphs.append(" | ".join(cell.text.strip() for cell in row.cells))
+    return "\n".join(paragraphs)
+
+
+def _extract_txt_or_csv(data: bytes, ext: str) -> str:
+    text = data.decode("utf-8", errors="replace")
+    if ext == ".csv":
+        reader = csv.reader(io.StringIO(text))
+        rows = []
+        for i, row in enumerate(reader):
+            if i >= 500:
+                break
+            rows.append(" | ".join(row))
+        return "\n".join(rows)
+    return text
+
+
+def _extract_xlsx(data: bytes) -> str:
+    wb = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+    parts = []
+    total_rows = 0
+    for ws in wb.worksheets[:10]:
+        parts.append(f"[Sheet: {ws.title}]")
+        for row in ws.iter_rows(values_only=True):
+            values = ["" if v is None else str(v) for v in row[:30]]
+            if any(values):
+                parts.append(" | ".join(values))
+                total_rows += 1
+            if total_rows >= 500:
+                break
+        if total_rows >= 500:
+            break
+    return "\n".join(parts)
+
+
+def _extract_file_text(filename: str, data: bytes) -> str:
+    ext = Path(filename).suffix.lower()
+    if ext not in ALLOWED_UPLOAD_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{filename}: unsupported file type. Use PDF, DOCX, TXT, CSV or XLSX.",
+        )
+    try:
+        if ext == ".pdf":
+            text = _extract_pdf(data)
+        elif ext == ".docx":
+            text = _extract_docx(data)
+        elif ext in {".txt", ".csv"}:
+            text = _extract_txt_or_csv(data, ext)
+        else:
+            text = _extract_xlsx(data)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{filename}: the file could not be read ({exc}).",
+        ) from exc
+
+    text = text.strip()
+    if not text:
+        if ext == ".pdf":
+            raise HTTPException(
+                status_code=400,
+                detail=f"{filename}: no extractable text was found. Image-only/scanned PDFs are not supported in this public demo.",
+            )
+        raise HTTPException(status_code=400, detail=f"{filename}: no readable text was found.")
+    return text[:MAX_EXTRACTED_CHARS_PER_FILE]
+
+
+def _safe_pdf_text(value) -> str:
+    if value is None:
+        return ""
+    return str(value).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _build_remediation_pdf(payload: dict) -> bytes:
+    result = payload.get("result") or {}
+    human_decision = payload.get("human_decision") or "Not recorded"
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=16 * mm,
+        leftMargin=16 * mm,
+        topMargin=16 * mm,
+        bottomMargin=16 * mm,
+        title="Agentic Redress & Remediation Assurance Report",
+        author="Portfolio demonstration",
+    )
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name="TitleCenter", parent=styles["Title"], alignment=TA_CENTER, spaceAfter=12))
+    styles.add(ParagraphStyle(name="SmallMuted", parent=styles["BodyText"], fontSize=8, leading=10, textColor="#667085"))
+    styles.add(ParagraphStyle(name="Section", parent=styles["Heading2"], spaceBefore=10, spaceAfter=6))
+    story = [
+        Paragraph("Agentic Redress &amp; Remediation Assurance", styles["TitleCenter"]),
+        Paragraph("Portfolio demonstration · Fictional / anonymised data only", styles["SmallMuted"]),
+        Spacer(1, 8),
+        Paragraph(f"<b>Recommendation:</b> {_safe_pdf_text(result.get('recommendation', '—'))}", styles["Heading2"]),
+        Paragraph(_safe_pdf_text(result.get("programme_summary", "")), styles["BodyText"]),
+        Spacer(1, 5),
+        Paragraph(_safe_pdf_text(result.get("rationale", "")), styles["BodyText"]),
+    ]
+
+    drivers = result.get("decision_drivers") or []
+    if drivers:
+        story.append(Paragraph("Decision drivers", styles["Section"]))
+        for item in drivers:
+            story.append(Paragraph("• " + _safe_pdf_text(item), styles["BodyText"]))
+
+    risk = result.get("risk_dashboard") or []
+    if risk:
+        story.append(Paragraph("Assurance risk dashboard", styles["Section"]))
+        data = [["Area", "Risk", "Reason"]]
+        for row in risk:
+            data.append([
+                _safe_pdf_text(row.get("area", "")),
+                _safe_pdf_text(row.get("rating", "")),
+                Paragraph(_safe_pdf_text(row.get("reason", "")), styles["BodyText"]),
+            ])
+        table = Table(data, colWidths=[42 * mm, 22 * mm, 100 * mm], repeatRows=1)
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), "#EEF3FF"),
+            ("GRID", (0, 0), (-1, -1), 0.4, "#C8D2E2"),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, -1), 8),
+            ("LEADING", (0, 0), (-1, -1), 10),
+        ]))
+        story.append(table)
+
+    rca = result.get("root_cause_analysis") or {}
+    if rca:
+        story.append(Paragraph("RCA flow", styles["Section"]))
+        flow_labels = [
+            ("Root cause", rca.get("root_cause")),
+            ("Customer harm", rca.get("customer_harm")),
+            ("Population risk", rca.get("population_risk")),
+            ("Data issue", rca.get("data_issue")),
+            ("Methodology impact", rca.get("methodology_impact")),
+            ("QA issue", rca.get("qa_issue")),
+            ("Closure risk", rca.get("closure_risk")),
+        ]
+        for label, value in flow_labels:
+            if value:
+                story.append(Paragraph(f"<b>{_safe_pdf_text(label)}:</b> {_safe_pdf_text(value)}", styles["BodyText"]))
+
+    findings = result.get("findings") or []
+    if findings:
+        story.append(PageBreak())
+        story.append(Paragraph("Detailed findings", styles["Section"]))
+        for i, finding in enumerate(findings, start=1):
+            story.append(Paragraph(
+                f"<b>{i}. {_safe_pdf_text(finding.get('area',''))} · {_safe_pdf_text(str(finding.get('severity','')).upper())}</b>",
+                styles["Heading3"],
+            ))
+            story.append(Paragraph("<b>Issue:</b> " + _safe_pdf_text(finding.get("issue", "")), styles["BodyText"]))
+            story.append(Paragraph("<b>Why it matters:</b> " + _safe_pdf_text(finding.get("why_it_matters", "")), styles["BodyText"]))
+            story.append(Paragraph("<b>Reviewer action:</b> " + _safe_pdf_text(finding.get("reviewer_action", "")), styles["BodyText"]))
+            for ev in finding.get("evidence_refs") or []:
+                story.append(Paragraph(
+                    f"<b>Evidence:</b> [{_safe_pdf_text(ev.get('source',''))}] {_safe_pdf_text(ev.get('evidence',''))}",
+                    styles["SmallMuted"],
+                ))
+            if finding.get("regulatory_reference"):
+                story.append(Paragraph(
+                    "<b>Regulatory reference to verify:</b> " + _safe_pdf_text(finding.get("regulatory_reference")),
+                    styles["SmallMuted"],
+                ))
+            story.append(Spacer(1, 6))
+
+    evidence = result.get("evidence_to_obtain") or []
+    if evidence:
+        story.append(Paragraph("Evidence to obtain / verify", styles["Section"]))
+        for item in evidence:
+            story.append(Paragraph("• " + _safe_pdf_text(item), styles["BodyText"]))
+
+    story.append(Paragraph("Human decision", styles["Section"]))
+    story.append(Paragraph(_safe_pdf_text(human_decision), styles["BodyText"]))
+    story.append(Spacer(1, 8))
+    story.append(Paragraph(
+        "This report is generated by a portfolio prototype. It does not make legal, regulatory, methodology-approval or compensation decisions. Human review remains required.",
+        styles["SmallMuted"],
+    ))
+    doc.build(story)
+    return buffer.getvalue()
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home():
     with open("index.html", "r", encoding="utf-8") as f:
@@ -113,6 +333,7 @@ async def health():
         "status": "ok",
         "agentic_mode": bool(os.getenv("OPENAI_API_KEY")),
         "demos": ["consumer-duty", "motor-finance", "remediation"],
+        "remediation_features": ["document-extraction", "evidence-traceability", "risk-dashboard", "rca-flow", "pdf-report"],
     }
 
 
@@ -144,6 +365,22 @@ async def motor_finance_review(case: MotorFinanceCaseInput, request: Request):
         raise HTTPException(status_code=500, detail=f"Agentic review failed: {exc}") from exc
 
 
+@app.post("/api/remediation/extract")
+async def remediation_extract(request: Request, files: list[UploadFile] = File(...)):
+    _check_rate_limit(request)
+    if not files or len(files) > MAX_UPLOAD_FILES:
+        raise HTTPException(status_code=400, detail=f"Upload between 1 and {MAX_UPLOAD_FILES} files.")
+    extracted = []
+    for upload in files:
+        filename = Path(upload.filename or "upload").name
+        data = await upload.read(MAX_UPLOAD_BYTES + 1)
+        if len(data) > MAX_UPLOAD_BYTES:
+            raise HTTPException(status_code=400, detail=f"{filename}: file exceeds the 2 MB demo limit.")
+        text = _extract_file_text(filename, data)
+        extracted.append({"filename": filename, "text": text, "characters": len(text)})
+    return {"files": extracted}
+
+
 @app.post("/api/remediation/review")
 async def remediation_review(case: RemediationProgrammeInput, request: Request):
     _require_api_key()
@@ -156,6 +393,16 @@ async def remediation_review(case: RemediationProgrammeInput, request: Request):
         raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Agentic review failed: {exc}") from exc
+
+
+@app.post("/api/remediation/report")
+async def remediation_report(payload: dict):
+    pdf_bytes = _build_remediation_pdf(payload)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="remediation-assurance-report.pdf"'},
+    )
 
 
 # Backwards compatibility for the original Consumer Duty demo endpoint.
