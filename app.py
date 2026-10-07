@@ -86,7 +86,8 @@ def _check_rate_limit(request: Request) -> None:
 
 def _validate_demo_input(case) -> None:
     for field_name, value in case.model_dump().items():
-        if len(value) > MAX_FIELD_CHARS:
+        limit = MAX_EXTRACTED_CHARS_PER_FILE * MAX_UPLOAD_FILES + 2000 if field_name == "uploaded_evidence" else MAX_FIELD_CHARS
+        if len(value) > limit:
             raise HTTPException(
                 status_code=400,
                 detail=f"{field_name} is too long for this portfolio demo.",
