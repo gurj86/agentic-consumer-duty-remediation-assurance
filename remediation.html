@@ -7,35 +7,40 @@
 <style>
 :root{--navy:#10203d;--blue:#315fd5;--bg:#f4f7fb;--line:#dce3ee;--ink:#172033;--muted:#667085;--amber:#a15c00;--red:#b42318;--green:#16794b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
-.wrap{max-width:1160px;margin:auto;padding:0 22px}header{background:linear-gradient(120deg,#0d1932,#294777);color:#fff;padding:28px 0 48px}
-.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#bed0ff}h1{font-size:clamp(30px,5vw,48px);line-height:1.06;margin:7px 0 10px}.lead{max-width:900px;color:#e0e9ff;font-size:17px}
+.wrap{max-width:1180px;margin:auto;padding:0 22px}header{background:linear-gradient(120deg,#0d1932,#294777);color:#fff;padding:28px 0 48px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#bed0ff}h1{font-size:clamp(30px,5vw,48px);line-height:1.06;margin:7px 0 10px}.lead{max-width:930px;color:#e0e9ff;font-size:17px}
 main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 10px 28px rgba(16,24,40,.07);margin-bottom:15px}.notice{background:#fff7e8;border:1px solid #efcc88;color:#6b4f00}
-.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.step{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfcfe}.step strong{display:block;font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.step{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfcfe}.step strong{display:block;font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:12px;font-weight:800;margin-bottom:5px}textarea{width:100%;min-height:112px;border:1px solid #cad4e2;border-radius:10px;padding:11px;font:inherit;resize:vertical}
-.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.upload{border:1px dashed #aebbd0;border-radius:12px;padding:16px;background:#f8faff}.upload input{display:block;margin-top:8px}.upload small{color:var(--muted)}.file-list{margin-top:9px;font-size:13px}.file-pill{display:inline-block;margin:4px 6px 0 0;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid #ccd7ea}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}button:disabled{opacity:.55;cursor:not-allowed}
 .results{display:none}.results.show{display:block}.badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;background:#eef3ff;color:#234baf}
 .drivers{background:#fff8eb;border:1px solid #efd29a;border-radius:11px;padding:12px 14px;margin:12px 0}.drivers ul{margin:6px 0 0 20px}
 .agents{background:#f5f7ff;border:1px solid #d9e2ff;border-radius:11px;padding:12px 14px;margin:12px 0}.agent-chip{display:inline-block;margin:5px 5px 0 0;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid #cad6ff;color:#2949a5;font-size:12px;font-weight:800}
+.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.risk-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfcfe}.risk-card strong{display:flex;justify-content:space-between;gap:8px}.risk{font-size:11px;border-radius:999px;padding:3px 7px}.risk.High{background:#fee4e2;color:#b42318}.risk.Medium{background:#fff0c2;color:#8a5200}.risk.Low{background:#dcfae6;color:#067647}.risk-card p{margin:6px 0 0;color:#667085;font-size:13px}
+.rca-flow{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:8px;overflow-x:auto;padding-bottom:5px}.rca-node{position:relative;min-width:130px;border:1px solid #d9e2f1;border-radius:12px;padding:12px;background:#f9fbff}.rca-node:not(:last-child)::after{content:"→";position:absolute;right:-10px;top:42%;font-weight:900;color:#7f8ba3;z-index:2}.rca-node b{display:block;font-size:12px;margin-bottom:5px}.rca-node span{font-size:12px;color:#5f6b7a}
 .finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.finding p{margin:5px 0;color:#475467}.finding a{display:inline-block;margin-top:7px;color:var(--blue);font-weight:800;text-decoration:none}
+.trace{background:#f8fafc;border-radius:8px;padding:9px;margin-top:8px;font-size:12px}.trace div{margin:4px 0}.source{font-weight:800;color:#344054}
 .evidence{background:#fafafa;border:1px dashed #ccd5e2;border-radius:10px;padding:12px;margin-top:12px}.human{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}
-.decision-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.decision-row button.active{background:var(--navy);color:#fff}.status{font-size:13px;color:var(--muted);margin-top:8px}
-@media(max-width:850px){.flow,.form-grid{grid-template-columns:1fr}}
+.decision-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.decision-row button.active{background:var(--navy);color:#fff}.status{font-size:13px;color:var(--muted);margin-top:8px}.report-actions{display:flex;justify-content:flex-end;margin-top:14px}
+@media(max-width:900px){.flow{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.dashboard{grid-template-columns:1fr 1fr}}@media(max-width:620px){.flow,.dashboard{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div style="max-width:1160px;margin:14px auto 0;padding:0 22px"><a href="/" style="color:#315fd5;font-weight:800;text-decoration:none">← Agentic Assurance Portfolio</a></div>
-<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Agentic Redress & Remediation Assurance</h1><p class="lead">A programme-level multi-agent assurance workflow that challenges customer harm, population identification, data lineage, redress methodology, QA and closure readiness before human sign-off.</p></div></header>
+<div style="max-width:1180px;margin:14px auto 0;padding:0 22px"><a href="/" style="color:#315fd5;font-weight:800;text-decoration:none">← Agentic Assurance Portfolio</a></div>
+<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Agentic Redress & Remediation Assurance</h1><p class="lead">A programme-level multi-agent assurance workflow that can review structured programme inputs and extracted evidence, trace findings back to sources, visualise risk and RCA, and produce a human-reviewable assurance report.</p></div></header>
 <main class="wrap">
-<div class="card notice"><strong>Fictional data only.</strong> This prototype does not approve real remediation methodology or calculate customer compensation.<br><strong>Privacy:</strong> Do not enter real customer data, personal information or confidential firm material.</div>
+<div class="card notice"><strong>Fictional data only.</strong> This prototype does not approve real remediation methodology or calculate customer compensation.<br><strong>Privacy:</strong> Do not upload real customer data, personal information or confidential firm material. Uploaded files are processed for this request and are not intended as a document store.</div>
 
 <section class="card">
 <div class="eyebrow" style="color:#61708a">Agentic workflow</div>
-<h2>Programme assurance, not just case review</h2>
+<h2>From evidence to assurance</h2>
 <div class="flow">
-<div class="step"><strong>1 · Lead Agent</strong><span>Reads the remediation design and decides which specialist agents to call.</span></div>
-<div class="step"><strong>2 · Population & Data</strong><span>Challenges harm scope, inclusion / exclusion logic, source data and lineage.</span></div>
-<div class="step"><strong>3 · Redress & QA</strong><span>Challenges methodology, assumptions, sampling and outcome testing.</span></div>
-<div class="step"><strong>4 · Governance</strong><span>Assesses closure readiness and routes the result to a human reviewer.</span></div>
+<div class="step"><strong>1 · Evidence Intake</strong><span>Reviewer fields plus PDF, DOCX, TXT, CSV or XLSX evidence.</span></div>
+<div class="step"><strong>2 · Lead Agent</strong><span>Decides which programme-assurance specialists to call.</span></div>
+<div class="step"><strong>3 · Specialist Review</strong><span>Population, data, methodology, QA, governance and FCA grounding.</span></div>
+<div class="step"><strong>4 · Visual Assurance</strong><span>Risk dashboard, source traceability and root-cause flow.</span></div>
+<div class="step"><strong>5 · Human / Report</strong><span>Human decision and downloadable PDF assurance report.</span></div>
 </div>
 </section>
 
@@ -49,6 +54,16 @@ main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid
 <div><label>QA / outcome testing</label><textarea id="qa">QA tested 20 completed cases from the 1,250-customer population. Two cases had incorrect delay dates and were corrected individually. No wider re-sample or population impact assessment was performed because overall completion remains high.</textarea></div>
 <div><label>Governance / proposed closure</label><textarea id="governance">The programme proposes closure once the remaining 4% of cases are completed. The rationale is that 96% have already been remediated and payment files are largely complete. The population definition, estimated-date approach and two QA exceptions remain open discussion points.</textarea></div>
 </div>
+
+<div class="upload" style="margin-top:16px">
+<strong>Optional evidence upload</strong><br>
+<small>Up to 3 fictional/anonymised files, 2 MB each. Supported: text-based PDF, DOCX, TXT, CSV and XLSX. Image-only scanned PDFs are not supported in this public demo.</small>
+<input id="files" type="file" multiple accept=".pdf,.docx,.txt,.csv,.xlsx">
+<div class="actions" style="justify-content:flex-start"><button id="extract">Extract evidence</button><button id="clearFiles">Clear evidence</button></div>
+<div class="status" id="uploadStatus">No evidence files loaded.</div>
+<div class="file-list" id="fileList"></div>
+</div>
+
 <div class="actions"><button id="reset">Load example</button><button class="primary" id="run">Run Agentic Programme Assurance</button></div>
 <div class="status" id="status">Live agentic review uses the server-side API connection.</div>
 </section>
@@ -57,13 +72,29 @@ main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid
 <div class="eyebrow" style="color:#61708a">Lead agent output</div>
 <h2 id="recommendation">—</h2><span class="badge" id="findingCount">—</span>
 <p id="summary"></p>
+
 <div class="drivers" id="driversBox" style="display:none"><strong id="driversTitle">Why the lead agent chose this outcome</strong><ul id="driversList"></ul></div>
+
 <div class="agents" id="agentsBox" style="display:none"><strong>Specialist agents consulted</strong><div id="agentsConsulted"></div></div>
+
+<h3>Assurance risk dashboard</h3>
+<div class="dashboard" id="riskDashboard"></div>
+
+<h3>Root-cause / remediation flow</h3>
+<div class="rca-flow" id="rcaFlow"></div>
+
+<h3>Detailed findings with evidence traceability</h3>
 <div id="findings"></div>
+
 <div class="evidence" id="evidenceBox" style="display:none"><strong>Evidence to obtain / verify</strong><ul id="evidenceList"></ul></div>
+
 <div class="human"><strong>Human assurance decision</strong><p id="humanNote">Agent output is advisory only.</p><div class="decision-row"><button data-decision="Pass">Pass</button><button data-decision="Further Work">Further Work</button><button data-decision="Escalate">Escalate</button></div><div class="status" id="humanDecision">No human decision recorded.</div></div>
+
+<div class="report-actions"><button class="primary" id="pdf">Generate Assurance Report (PDF)</button></div>
+<div class="status" id="pdfStatus"></div>
 </section>
 </main>
+
 <script>
 const example={
 harm:"A platform migration caused some pension and investment customers to experience delays in transfers, investment instructions and cash movements. The programme assumes harm is limited to customers who complained or had an operational incident code raised.",
@@ -73,10 +104,40 @@ methodology:"Redress is intended to restore customers for delay-related financia
 qa:"QA tested 20 completed cases from the 1,250-customer population. Two cases had incorrect delay dates and were corrected individually. No wider re-sample or population impact assessment was performed because overall completion remains high.",
 governance:"The programme proposes closure once the remaining 4% of cases are completed. The rationale is that 96% have already been remediated and payment files are largely complete. The population definition, estimated-date approach and two QA exceptions remain open discussion points."
 };
+let uploadedEvidence="";
+let currentResult=null;
+let humanDecision="Not recorded";
+
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
-function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v;document.getElementById("results").classList.remove("show")}
+function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v;document.getElementById("results").classList.remove("show");currentResult=null}
 document.getElementById("reset").onclick=loadExample;
-document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("humanDecision").textContent="Human decision recorded: "+b.dataset.decision+" (demo only)."});
+
+document.getElementById("clearFiles").onclick=()=>{
+ document.getElementById("files").value="";uploadedEvidence="";document.getElementById("fileList").innerHTML="";document.getElementById("uploadStatus").textContent="No evidence files loaded.";
+};
+
+document.getElementById("extract").onclick=async()=>{
+ const input=document.getElementById("files"),btn=document.getElementById("extract"),status=document.getElementById("uploadStatus");
+ if(!input.files.length){status.textContent="Choose at least one supported file first.";return}
+ if(input.files.length>3){status.textContent="This demo accepts up to 3 files at a time.";return}
+ const form=new FormData();[...input.files].forEach(f=>form.append("files",f));
+ btn.disabled=true;status.textContent="Extracting evidence…";
+ try{
+  const res=await fetch("/api/remediation/extract",{method:"POST",body:form});
+  const data=await res.json();if(!res.ok)throw new Error(data.detail||"Evidence extraction failed");
+  uploadedEvidence=data.files.map(f=>"=== FILE: "+f.filename+" ===\n"+f.text).join("\n\n");
+  document.getElementById("fileList").innerHTML=data.files.map(f=>'<span class="file-pill">'+esc(f.filename)+' · '+f.characters+' chars</span>').join("");
+  status.textContent=data.files.length+" evidence file(s) extracted and ready for agent review.";
+ }catch(e){status.textContent=e.message;uploadedEvidence=""}
+ finally{btn.disabled=false}
+};
+
+document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ humanDecision=b.dataset.decision;
+ document.getElementById("humanDecision").textContent="Human decision recorded: "+humanDecision+" (demo only).";
+});
+
 document.getElementById("run").onclick=async()=>{
  const run=document.getElementById("run"),status=document.getElementById("status");run.disabled=true;status.textContent="Lead agent is coordinating programme-assurance specialists…";
  const body={
@@ -85,24 +146,63 @@ document.getElementById("run").onclick=async()=>{
   data_lineage:document.getElementById("data").value,
   redress_methodology:document.getElementById("methodology").value,
   qa_outcome_testing:document.getElementById("qa").value,
-  governance_closure:document.getElementById("governance").value
+  governance_closure:document.getElementById("governance").value,
+  uploaded_evidence:uploadedEvidence
  };
  try{
   const res=await fetch("/api/remediation/review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   const data=await res.json();if(!res.ok)throw new Error(data.detail||"Review failed");
+  currentResult=data;
   document.getElementById("recommendation").textContent=data.recommendation;
   document.getElementById("findingCount").textContent=data.findings.length+" findings";
   document.getElementById("summary").textContent=data.programme_summary+" "+data.rationale;
-  const drivers=data.decision_drivers||[];document.getElementById("driversBox").style.display=drivers.length?"block":"none";document.getElementById("driversTitle").textContent=data.recommendation==="Escalate"?"Why the lead agent chose Escalate":data.recommendation==="Further Work"?"Why the lead agent chose Further Work":"Why the lead agent chose this outcome";document.getElementById("driversList").innerHTML=drivers.map(x=>"<li>"+esc(x)+"</li>").join("");
-  const agents=data.agents_consulted||[];document.getElementById("agentsBox").style.display=agents.length?"block":"none";document.getElementById("agentsConsulted").innerHTML=agents.map(a=>'<span class="agent-chip">'+esc(a)+'</span>').join("");
-  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(f.regulatory_reference?'<p><b>Regulatory reference to verify:</b> '+esc(f.regulatory_reference)+'</p>':'')+(f.regulatory_url?'<a href="'+esc(f.regulatory_url)+'" target="_blank" rel="noreferrer">Open official FCA source →</a>':'')+'</div>').join("");
-  const ev=data.evidence_to_obtain||[];document.getElementById("evidenceBox").style.display=ev.length?"block":"none";document.getElementById("evidenceList").innerHTML=ev.map(x=>"<li>"+esc(x)+"</li>").join("");
+
+  const drivers=data.decision_drivers||[];
+  document.getElementById("driversBox").style.display=drivers.length?"block":"none";
+  document.getElementById("driversTitle").textContent=data.recommendation==="Escalate"?"Why the lead agent chose Escalate":data.recommendation==="Further Work"?"Why the lead agent chose Further Work":"Why the lead agent chose this outcome";
+  document.getElementById("driversList").innerHTML=drivers.map(x=>"<li>"+esc(x)+"</li>").join("");
+
+  const agents=data.agents_consulted||[];
+  document.getElementById("agentsBox").style.display=agents.length?"block":"none";
+  document.getElementById("agentsConsulted").innerHTML=agents.map(a=>'<span class="agent-chip">'+esc(a)+'</span>').join("");
+
+  document.getElementById("riskDashboard").innerHTML=(data.risk_dashboard||[]).map(r=>'<div class="risk-card"><strong><span>'+esc(r.area)+'</span><span class="risk '+esc(r.rating)+'">'+esc(r.rating)+'</span></strong><p>'+esc(r.reason)+'</p></div>').join("");
+
+  const r=data.root_cause_analysis||{};
+  const nodes=[
+   ["Root cause",r.root_cause],["Customer harm",r.customer_harm],["Population risk",r.population_risk],
+   ["Data issue",r.data_issue],["Methodology impact",r.methodology_impact],["QA issue",r.qa_issue],["Closure risk",r.closure_risk]
+  ];
+  document.getElementById("rcaFlow").innerHTML=nodes.map(n=>'<div class="rca-node"><b>'+esc(n[0])+'</b><span>'+esc(n[1]||"Not evidenced in supplied material")+'</span></div>').join("");
+
+  document.getElementById("findings").innerHTML=data.findings.map(f=>{
+   const refs=(f.evidence_refs||[]).map(ev=>'<div><span class="source">'+esc(ev.source)+':</span> '+esc(ev.evidence)+'</div>').join("");
+   return '<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(refs?'<div class="trace"><b>Evidence used</b>'+refs+'</div>':'')+(f.regulatory_reference?'<p><b>Regulatory reference to verify:</b> '+esc(f.regulatory_reference)+'</p>':'')+(f.regulatory_url?'<a href="'+esc(f.regulatory_url)+'" target="_blank" rel="noreferrer">Open official FCA source →</a>':'')+'</div>'
+  }).join("");
+
+  const ev=data.evidence_to_obtain||[];
+  document.getElementById("evidenceBox").style.display=ev.length?"block":"none";
+  document.getElementById("evidenceList").innerHTML=ev.map(x=>"<li>"+esc(x)+"</li>").join("");
   document.getElementById("humanNote").textContent=data.human_review_note;
   document.getElementById("results").classList.add("show");
   status.textContent="Programme assurance complete. Human decision still required.";
   document.getElementById("results").scrollIntoView({behavior:"smooth",block:"start"});
  }catch(e){status.textContent=e.message}
  finally{run.disabled=false}
+};
+
+document.getElementById("pdf").onclick=async()=>{
+ const status=document.getElementById("pdfStatus"),btn=document.getElementById("pdf");
+ if(!currentResult){status.textContent="Run the agentic assurance review first.";return}
+ btn.disabled=true;status.textContent="Generating PDF assurance report…";
+ try{
+  const res=await fetch("/api/remediation/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({result:currentResult,human_decision:humanDecision})});
+  if(!res.ok){const data=await res.json();throw new Error(data.detail||"PDF generation failed")}
+  const blob=await res.blob(),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="remediation-assurance-report.pdf";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  status.textContent="PDF assurance report generated.";
+ }catch(e){status.textContent=e.message}
+ finally{btn.disabled=false}
 };
 </script>
 </body>
