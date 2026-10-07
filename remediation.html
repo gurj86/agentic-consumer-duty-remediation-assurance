@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agentic Redress & Remediation Assurance</title>
+<style>
+:root{--navy:#10203d;--blue:#315fd5;--bg:#f4f7fb;--line:#dce3ee;--ink:#172033;--muted:#667085;--amber:#a15c00;--red:#b42318;--green:#16794b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1160px;margin:auto;padding:0 22px}header{background:linear-gradient(120deg,#0d1932,#294777);color:#fff;padding:28px 0 48px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#bed0ff}h1{font-size:clamp(30px,5vw,48px);line-height:1.06;margin:7px 0 10px}.lead{max-width:900px;color:#e0e9ff;font-size:17px}
+main{margin-top:-22px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 10px 28px rgba(16,24,40,.07);margin-bottom:15px}.notice{background:#fff7e8;border:1px solid #efcc88;color:#6b4f00}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.step{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfcfe}.step strong{display:block;font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:12px;font-weight:800;margin-bottom:5px}textarea{width:100%;min-height:112px;border:1px solid #cad4e2;border-radius:10px;padding:11px;font:inherit;resize:vertical}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.results{display:none}.results.show{display:block}.badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;background:#eef3ff;color:#234baf}
+.drivers{background:#fff8eb;border:1px solid #efd29a;border-radius:11px;padding:12px 14px;margin:12px 0}.drivers ul{margin:6px 0 0 20px}
+.agents{background:#f5f7ff;border:1px solid #d9e2ff;border-radius:11px;padding:12px 14px;margin:12px 0}.agent-chip{display:inline-block;margin:5px 5px 0 0;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid #cad6ff;color:#2949a5;font-size:12px;font-weight:800}
+.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:13px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.finding p{margin:5px 0;color:#475467}.finding a{display:inline-block;margin-top:7px;color:var(--blue);font-weight:800;text-decoration:none}
+.evidence{background:#fafafa;border:1px dashed #ccd5e2;border-radius:10px;padding:12px;margin-top:12px}.human{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}
+.decision-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.decision-row button.active{background:var(--navy);color:#fff}.status{font-size:13px;color:var(--muted);margin-top:8px}
+@media(max-width:850px){.flow,.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div style="max-width:1160px;margin:14px auto 0;padding:0 22px"><a href="/" style="color:#315fd5;font-weight:800;text-decoration:none">← Agentic Assurance Portfolio</a></div>
+<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Agentic Redress & Remediation Assurance</h1><p class="lead">A programme-level multi-agent assurance workflow that challenges customer harm, population identification, data lineage, redress methodology, QA and closure readiness before human sign-off.</p></div></header>
+<main class="wrap">
+<div class="card notice"><strong>Fictional data only.</strong> This prototype does not approve real remediation methodology or calculate customer compensation.<br><strong>Privacy:</strong> Do not enter real customer data, personal information or confidential firm material.</div>
+
+<section class="card">
+<div class="eyebrow" style="color:#61708a">Agentic workflow</div>
+<h2>Programme assurance, not just case review</h2>
+<div class="flow">
+<div class="step"><strong>1 · Lead Agent</strong><span>Reads the remediation design and decides which specialist agents to call.</span></div>
+<div class="step"><strong>2 · Population & Data</strong><span>Challenges harm scope, inclusion / exclusion logic, source data and lineage.</span></div>
+<div class="step"><strong>3 · Redress & QA</strong><span>Challenges methodology, assumptions, sampling and outcome testing.</span></div>
+<div class="step"><strong>4 · Governance</strong><span>Assesses closure readiness and routes the result to a human reviewer.</span></div>
+</div>
+</section>
+
+<section class="card">
+<h2>Fictional remediation programme</h2>
+<div class="form-grid">
+<div><label>Customer harm / root cause</label><textarea id="harm">A platform migration caused some pension and investment customers to experience delays in transfers, investment instructions and cash movements. The programme assumes harm is limited to customers who complained or had an operational incident code raised.</textarea></div>
+<div><label>Population identification</label><textarea id="population">1,250 customers are in scope. The population was built from complaint records and incident codes. Customers with no complaint or incident code were excluded. Around 8% of records have missing or estimated instruction dates. The programme is currently 96% complete.</textarea></div>
+<div><label>Data lineage / evidence</label><textarea id="data">Source data comes from the legacy platform, migration extracts and payment files. Some instruction dates were estimated from document-upload dates where the original timestamp was unavailable. A full source-to-redress reconciliation has not yet been completed.</textarea></div>
+<div><label>Redress methodology</label><textarea id="methodology">Redress is intended to restore customers for delay-related financial loss. Where exact delay dates are missing, the calculation uses the average delay from completed cases in the same journey. Exceptions above £2,500 are manually reviewed.</textarea></div>
+<div><label>QA / outcome testing</label><textarea id="qa">QA tested 20 completed cases from the 1,250-customer population. Two cases had incorrect delay dates and were corrected individually. No wider re-sample or population impact assessment was performed because overall completion remains high.</textarea></div>
+<div><label>Governance / proposed closure</label><textarea id="governance">The programme proposes closure once the remaining 4% of cases are completed. The rationale is that 96% have already been remediated and payment files are largely complete. The population definition, estimated-date approach and two QA exceptions remain open discussion points.</textarea></div>
+</div>
+<div class="actions"><button id="reset">Load example</button><button class="primary" id="run">Run Agentic Programme Assurance</button></div>
+<div class="status" id="status">Live agentic review uses the server-side API connection.</div>
+</section>
+
+<section class="card results" id="results">
+<div class="eyebrow" style="color:#61708a">Lead agent output</div>
+<h2 id="recommendation">—</h2><span class="badge" id="findingCount">—</span>
+<p id="summary"></p>
+<div class="drivers" id="driversBox" style="display:none"><strong id="driversTitle">Why the lead agent chose this outcome</strong><ul id="driversList"></ul></div>
+<div class="agents" id="agentsBox" style="display:none"><strong>Specialist agents consulted</strong><div id="agentsConsulted"></div></div>
+<div id="findings"></div>
+<div class="evidence" id="evidenceBox" style="display:none"><strong>Evidence to obtain / verify</strong><ul id="evidenceList"></ul></div>
+<div class="human"><strong>Human assurance decision</strong><p id="humanNote">Agent output is advisory only.</p><div class="decision-row"><button data-decision="Pass">Pass</button><button data-decision="Further Work">Further Work</button><button data-decision="Escalate">Escalate</button></div><div class="status" id="humanDecision">No human decision recorded.</div></div>
+</section>
+</main>
+<script>
+const example={
+harm:"A platform migration caused some pension and investment customers to experience delays in transfers, investment instructions and cash movements. The programme assumes harm is limited to customers who complained or had an operational incident code raised.",
+population:"1,250 customers are in scope. The population was built from complaint records and incident codes. Customers with no complaint or incident code were excluded. Around 8% of records have missing or estimated instruction dates. The programme is currently 96% complete.",
+data:"Source data comes from the legacy platform, migration extracts and payment files. Some instruction dates were estimated from document-upload dates where the original timestamp was unavailable. A full source-to-redress reconciliation has not yet been completed.",
+methodology:"Redress is intended to restore customers for delay-related financial loss. Where exact delay dates are missing, the calculation uses the average delay from completed cases in the same journey. Exceptions above £2,500 are manually reviewed.",
+qa:"QA tested 20 completed cases from the 1,250-customer population. Two cases had incorrect delay dates and were corrected individually. No wider re-sample or population impact assessment was performed because overall completion remains high.",
+governance:"The programme proposes closure once the remaining 4% of cases are completed. The rationale is that 96% have already been remediated and payment files are largely complete. The population definition, estimated-date approach and two QA exceptions remain open discussion points."
+};
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v;document.getElementById("results").classList.remove("show")}
+document.getElementById("reset").onclick=loadExample;
+document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("humanDecision").textContent="Human decision recorded: "+b.dataset.decision+" (demo only)."});
+document.getElementById("run").onclick=async()=>{
+ const run=document.getElementById("run"),status=document.getElementById("status");run.disabled=true;status.textContent="Lead agent is coordinating programme-assurance specialists…";
+ const body={
+  customer_harm:document.getElementById("harm").value,
+  population_identification:document.getElementById("population").value,
+  data_lineage:document.getElementById("data").value,
+  redress_methodology:document.getElementById("methodology").value,
+  qa_outcome_testing:document.getElementById("qa").value,
+  governance_closure:document.getElementById("governance").value
+ };
+ try{
+  const res=await fetch("/api/remediation/review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const data=await res.json();if(!res.ok)throw new Error(data.detail||"Review failed");
+  document.getElementById("recommendation").textContent=data.recommendation;
+  document.getElementById("findingCount").textContent=data.findings.length+" findings";
+  document.getElementById("summary").textContent=data.programme_summary+" "+data.rationale;
+  const drivers=data.decision_drivers||[];document.getElementById("driversBox").style.display=drivers.length?"block":"none";document.getElementById("driversTitle").textContent=data.recommendation==="Escalate"?"Why the lead agent chose Escalate":data.recommendation==="Further Work"?"Why the lead agent chose Further Work":"Why the lead agent chose this outcome";document.getElementById("driversList").innerHTML=drivers.map(x=>"<li>"+esc(x)+"</li>").join("");
+  const agents=data.agents_consulted||[];document.getElementById("agentsBox").style.display=agents.length?"block":"none";document.getElementById("agentsConsulted").innerHTML=agents.map(a=>'<span class="agent-chip">'+esc(a)+'</span>').join("");
+  document.getElementById("findings").innerHTML=data.findings.map(f=>'<div class="finding '+esc(f.severity)+'"><strong>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</strong><p><b>Issue:</b> '+esc(f.issue)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Reviewer action:</b> '+esc(f.reviewer_action)+'</p>'+(f.regulatory_reference?'<p><b>Regulatory reference to verify:</b> '+esc(f.regulatory_reference)+'</p>':'')+(f.regulatory_url?'<a href="'+esc(f.regulatory_url)+'" target="_blank" rel="noreferrer">Open official FCA source →</a>':'')+'</div>').join("");
+  const ev=data.evidence_to_obtain||[];document.getElementById("evidenceBox").style.display=ev.length?"block":"none";document.getElementById("evidenceList").innerHTML=ev.map(x=>"<li>"+esc(x)+"</li>").join("");
+  document.getElementById("humanNote").textContent=data.human_review_note;
+  document.getElementById("results").classList.add("show");
+  status.textContent="Programme assurance complete. Human decision still required.";
+  document.getElementById("results").scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(e){status.textContent=e.message}
+ finally{run.disabled=false}
+};
+</script>
+</body>
+</html>
