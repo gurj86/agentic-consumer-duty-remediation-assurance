@@ -17,6 +17,8 @@ class AssuranceFinding(BaseModel):
     reviewer_action: str
     fca_reference: str | None = None
     fca_url: str | None = None
+    fos_example: str | None = None
+    fos_url: str | None = None
 
 
 class AssuranceResult(BaseModel):
@@ -82,6 +84,23 @@ Return concise assurance findings and suggested reviewer actions.
 """,
 )
 
+fos_examples_agent = Agent(
+    name="FOS Illustrative Example Specialist",
+    model=MODEL,
+    instructions=BASE_BOUNDARY + """
+Use only the published FOS examples contained in the curated grounding pack.
+Identify an example only where it genuinely helps a human reviewer understand an
+evidence or customer-treatment theme in the current case.
+
+Never treat an FOS example as an FCA rule, binding precedent, proof of unfairness,
+or a reason that another case must have the same outcome. Explain the factual theme
+that makes the example relevant. If none of the curated examples is meaningfully
+similar, say so and do not invent one.
+
+Return the exact example name and exact source URL from the grounding pack.
+""",
+)
+
 regulatory_agent = Agent(
     name="Regulatory Reference Specialist",
     model=MODEL,
@@ -141,6 +160,11 @@ human reviewer owns the final decision.
 For each finding, populate fca_reference and fca_url when a relevant FCA source
 has been identified by the regulatory specialist. Only use URLs supplied by that
 specialist from the approved FCA reference map. Do not fabricate URLs.
+
+Populate fos_example and fos_url only where the FOS illustrative-example specialist
+identified a genuinely relevant published example. The FOS item must be described
+as illustrative and fact-specific, never as a rule, binding precedent or proof of
+the correct outcome.
 """,
     tools=[
         affordability_agent.as_tool(
@@ -158,6 +182,10 @@ specialist from the approved FCA reference map. Do not fabricate URLs.
         regulatory_agent.as_tool(
             tool_name="identify_regulatory_references",
             tool_description="Identify relevant FCA/Consumer Duty/CONC references for human verification.",
+        ),
+        fos_examples_agent.as_tool(
+            tool_name="identify_fos_illustrative_examples",
+            tool_description="Identify relevant published FOS examples as non-binding, fact-specific illustrations.",
         ),
     ],
     output_type=AssuranceResult,
