@@ -40,15 +40,15 @@ label{display:block;font-size:12px;font-weight:800;margin:13px 0 5px}textarea{wi
   <section class="card">
     <h2>Fictional case</h2>
     <label>Customer circumstances</label>
-    <textarea id="circumstances">Customer lost their job 6 weeks ago and is receiving Universal Credit. They have missed two payments and expect to return to work soon.</textarea>
+    <textarea id="circumstances">Customer lost their job 6 weeks ago and is receiving Universal Credit. They have missed two payments, have no confirmed return-to-work date and say their current income is tight.</textarea>
     <label>Call / interaction notes</label>
-    <textarea id="interaction">Customer became upset during the call and mentioned a recent bereavement. They asked to be contacted by email where possible.</textarea>
+    <textarea id="interaction">Customer became upset during the call and explained they are grieving a recent bereavement and are finding repeated calls difficult. They asked to be contacted by email only where possible and said they did not feel ready to make longer-term financial decisions during the call.</textarea>
     <label>Vulnerability / support needs</label>
-    <textarea id="vulnerability">Recent bereavement and temporary financial difficulty.</textarea>
+    <textarea id="vulnerability">Recent bereavement, emotional distress, temporary financial difficulty and a stated preference for email contact.</textarea>
     <label>Actions taken</label>
-    <textarea id="actions">A 6-month repayment plan of £120 per month was agreed. Standard outbound contact remains in place.</textarea>
+    <textarea id="actions">A 6-month repayment plan of £120 per month was agreed without a recorded income-and-expenditure assessment. Standard outbound telephone contact remains in place despite the customer's email preference. No wider support or debt-advice signposting is recorded.</textarea>
     <label>Agent final rationale</label>
-    <textarea id="rationale">The customer accepted the reduced payment arrangement and confirmed they were happy with the plan. The payment is lower than the contractual amount, so I believe the outcome is fair and appropriate.</textarea>
+    <textarea id="rationale">The customer accepted the reduced payment arrangement, so I consider affordability and fair treatment sufficiently evidenced. As the customer agreed to the plan, I do not think further vulnerability, communication-preference or support checks are required.</textarea>
     <div class="actions"><button id="reset">Load example</button><button class="primary" id="run">Run Agentic Assurance Review</button></div>
     <div class="status" id="status">Requires a locally configured OPENAI_API_KEY.</div>
   </section>
@@ -69,11 +69,11 @@ label{display:block;font-size:12px;font-weight:800;margin:13px 0 5px}textarea{wi
 </main>
 <script>
 const example={
- circumstances:"Customer lost their job 6 weeks ago and is receiving Universal Credit. They have missed two payments and expect to return to work soon.",
- interaction:"Customer became upset during the call and mentioned a recent bereavement. They asked to be contacted by email where possible.",
- vulnerability:"Recent bereavement and temporary financial difficulty.",
- actions:"A 6-month repayment plan of £120 per month was agreed. Standard outbound contact remains in place.",
- rationale:"The customer accepted the reduced payment arrangement and confirmed they were happy with the plan. The payment is lower than the contractual amount, so I believe the outcome is fair and appropriate."
+ circumstances:"Customer lost their job 6 weeks ago and is receiving Universal Credit. They have missed two payments, have no confirmed return-to-work date and say their current income is tight.",
+ interaction:"Customer became upset during the call and explained they are grieving a recent bereavement and are finding repeated calls difficult. They asked to be contacted by email only where possible and said they did not feel ready to make longer-term financial decisions during the call.",
+ vulnerability:"Recent bereavement, emotional distress, temporary financial difficulty and a stated preference for email contact.",
+ actions:"A 6-month repayment plan of £120 per month was agreed without a recorded income-and-expenditure assessment. Standard outbound telephone contact remains in place despite the customer's email preference. No wider support or debt-advice signposting is recorded.",
+ rationale:"The customer accepted the reduced payment arrangement, so I consider affordability and fair treatment sufficiently evidenced. As the customer agreed to the plan, I do not think further vulnerability, communication-preference or support checks are required."
 };
 function esc(v){return String(v??"").replace(/[&<>"\']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[m]))}
 function loadExample(){for(const [k,v] of Object.entries(example))document.getElementById(k).value=v}
