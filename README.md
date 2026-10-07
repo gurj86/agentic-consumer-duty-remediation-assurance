@@ -12,6 +12,24 @@ The initial use case is **Collections & Recoveries**. A lead assurance agent can
 
 The system then produces a structured assurance recommendation for **human review**.
 
+## Grounded assurance knowledge
+
+The agentic workflow is now grounded in a small, controlled knowledge pack rather
+than relying only on general model knowledge. The pack contains:
+
+- the portfolio assurance principles carried across from the earlier rule-based
+  Collections & Recoveries prototype;
+- affordability, vulnerability, communication and evidence-quality challenge
+  principles; and
+- selected FCA / CONC / Consumer Duty reference points for human verification.
+
+The agents are instructed to use this curated material first and to state when the
+knowledge pack does not support a precise conclusion.
+
+This is still a portfolio demonstration. It is **not** connected to a live FCA
+Handbook feed, FOS decision database, employer methodology or customer systems.
+Those would be further production-style grounding layers.
+
 ## Why this is agentic
 
 This project is different from a fixed rule-based dashboard. It uses the OpenAI Agents SDK so a lead agent can decide which specialist agents to call, use their findings, reconcile different issues and produce a final assurance summary.
