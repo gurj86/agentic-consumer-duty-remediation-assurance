@@ -21,6 +21,7 @@ from agent_workflow import run_assurance as run_consumer_duty_assurance
 from motor_finance_workflow import run_assurance as run_motor_finance_assurance
 from remediation_workflow import run_assurance as run_remediation_assurance
 from complaint_redress_workflow import run_complaint_workflow
+from complaint_redress_completion import prepare, approve, pdf
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
@@ -826,7 +827,7 @@ async def complaint_redress_run(case: ComplaintRedressInput, request: Request):
     try:
         result = await run_complaint_workflow(case.model_dump())
         _record_demo_run("complaint-redress", True)
-        return result.model_dump()
+        return prepare(result, case.model_dump())
     except HTTPException:
         _record_demo_run("complaint-redress", False)
         raise
@@ -894,3 +895,25 @@ async def consumer_duty_report(payload: dict):
 @app.post("/api/review")
 async def legacy_consumer_duty_review(case: ConsumerDutyCaseInput, request: Request):
     return await consumer_duty_review(case, request)
+
+
+class ComplaintApprovalInput(BaseModel):
+    review_token: str
+    reviewer: str
+
+class ComplaintPDFInput(BaseModel):
+    approval_token: str
+
+@app.post("/api/complaint-redress/approve")
+async def complaint_approve(body: ComplaintApprovalInput):
+    try:
+        return {"approval_token": approve(body.review_token, body.reviewer)}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+@app.post("/api/complaint-redress/pdf")
+async def complaint_pdf(body: ComplaintPDFInput):
+    try:
+        return Response(pdf(body.approval_token), media_type="application/pdf", headers={"Content-Disposition": 'attachment; filename="fictional-final-response.pdf"'})
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
