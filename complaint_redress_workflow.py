@@ -51,6 +51,12 @@ class ComplaintWorkflowResult(BaseModel):
     missing_evidence: list[str] = Field(default_factory=list)
     methodology_check: str
     redress_trigger: Literal["Not reached", "Illustrative calculation permitted", "Human methodology approval required"]
+    redress_status: Literal["Not applicable", "Calculated", "Pending human approval"]
+    redress_principal: str = ""
+    redress_interest: str = ""
+    redress_total: str = ""
+    redress_methodology_summary: str = ""
+    final_response_status: Literal["Not generated - investigation incomplete", "Draft FRL - upheld", "Draft FRL - not upheld"]
     final_response_draft: str
     human_review_note: str
 
@@ -70,7 +76,9 @@ disclosure = specialist("Disclosure & Customer Evidence Specialist",
 methodology = specialist("Internal Methodology Specialist",
     "Compare the evidence with the supplied fictional internal methodology and identify where human approval or missing inputs prevent a final outcome.")
 response = specialist("Final Response Drafting Specialist",
-    "Draft a concise customer response from the supplied findings. Mark it clearly as a draft requiring human approval.")
+    """Draft a concise customer-facing Final Response Letter (FRL) only when the complaint investigation is complete and the lead recommendation is Uphold or Reject.
+The FRL must clearly state the final complaint outcome, the evidence considered, the main reasons, any completed illustrative redress outcome, and that this is a fictional portfolio draft requiring human approval before issue.
+If the case is Further Investigation or Escalate, do not create an FRL; the case is not at final-response stage.""")
 
 lead = Agent(
     name="Lead Complaint-to-Redress Agent",
@@ -79,7 +87,22 @@ lead = Agent(
 Coordinate the fictional complaint from intake to outcome.
 Use specialists where relevant and return an audit-friendly result covering complaint
 classification, chronology, evidence sufficiency, findings, methodology check,
-recommended outcome, redress gate and draft final response.
+recommended outcome, completed illustrative redress where appropriate, and a draft final response.
+
+FINAL RESPONSE RULE
+A Final Response Letter is only appropriate when the investigation is complete.
+- If recommendation is Uphold, set final_response_status to "Draft FRL - upheld" and draft an upheld final response.
+- If recommendation is Reject, set final_response_status to "Draft FRL - not upheld" and draft a not-upheld final response.
+- If recommendation is Further Investigation or Escalate, set final_response_status to "Not generated - investigation incomplete" and leave final_response_draft empty. Do not write a holding letter and call it a final response.
+
+REDRESS RULE
+For a completed upheld fictional case, use only the redress figures explicitly supplied in illustrative_redress_inputs and the fictional internal methodology. Do not invent or recalculate missing figures.
+Where the supplied fictional methodology and figures are complete, set:
+- redress_status = "Calculated"
+- redress_trigger = "Illustrative calculation permitted"
+and populate principal, interest, total and methodology summary exactly from the supplied fictional inputs.
+For a completed rejected case use redress_status = "Not applicable".
+For an incomplete investigation use redress_status = "Pending human approval" or "Not applicable" as appropriate.
 
 Recommendations:
 Uphold = evidence and fictional methodology support the complaint, subject to human approval.
@@ -87,9 +110,7 @@ Reject = evidence and methodology support rejection, subject to human approval.
 Further Investigation = important evidence is missing or unclear.
 Escalate = material contradiction or high-impact issue needs senior or specialist review.
 
-Do not calculate real compensation. Only mark illustrative redress as permitted if
-the supplied fictional methodology and inputs are clear enough for a human-approved
-training calculation. Every material finding should cite the supplied field or file.
+Do not calculate real compensation or substitute current scheme rules. This portfolio demo may display a completed fictional redress outcome only where the fictional methodology and pre-calculated inputs are explicitly supplied. Every material finding should cite the supplied field or file.
 """,
     tools=[
         intake.as_tool(tool_name="classify_complaint", tool_description="Classify the complaint and allegations."),
