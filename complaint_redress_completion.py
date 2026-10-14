@@ -13,7 +13,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
 
 # Ephemeral signing key: approvals expire and are invalidated on service restart.
 _KEY = secrets.token_bytes(32)
@@ -86,15 +86,15 @@ def pdf(token):
     stream = io.BytesIO()
     styles = getSampleStyleSheet()
     styles['Normal'].fontSize = 10
-    styles['Normal'].leading = 15
+    styles['Normal'].leading = 13
     story = [Paragraph('Final response', styles['Title']), Paragraph('FICTIONAL MOTOR FINANCE COMPLAINT', styles['Heading2']), Paragraph(escape(WARNING), styles['Normal']), Spacer(1, 6*mm)]
     rows = [['Fictional redress breakdown', 'Amount']] + [[label, data['breakdown'][key]] for label, key in [('Principal overpayment', 'principal'), ('Compensatory interest', 'interest'), ('Total fictional redress', 'total')]]
     table = Table(rows, colWidths=[115*mm, 55*mm])
     table.setStyle(TableStyle([('BACKGROUND', (0,0), (-1,0), colors.HexColor('#0b1736')), ('TEXTCOLOR', (0,0), (-1,0), colors.white), ('BACKGROUND', (0,-1), (-1,-1), colors.HexColor('#eef3ff')), ('FONTNAME', (0,-1), (-1,-1), 'Helvetica-Bold'), ('ALIGN', (1,0), (1,-1), 'RIGHT'), ('TOPPADDING', (0,0), (-1,-1), 9), ('BOTTOMPADDING', (0,0), (-1,-1), 9)]))
     story += [table, Spacer(1, 6*mm)]
     for section in data['letter'].split('\n\n')[1:]:
-        story += [Paragraph(escape(section).replace('\n', '<br/>'), styles['Normal']), Spacer(1, 4*mm)]
-    story += [Paragraph('Human approval', styles['Heading2']), Paragraph(escape(data['reviewer'] + ' · ' + data['approved_at']) + '<br/>Approved for demonstration issue only.', styles['Normal'])]
+        story += [Paragraph(escape(section).replace('\n', '<br/>'), styles['Normal']), Spacer(1, 3*mm)]
+    story += [KeepTogether([Paragraph('Human approval', styles['Heading2']), Paragraph(escape(data['reviewer'] + ' · ' + data['approved_at']) + '<br/>Approved for demonstration issue only.', styles['Normal'])])]
     def footer(canvas, doc):
         canvas.setFont('Helvetica', 8)
         canvas.setFillColor(colors.HexColor('#667085'))
