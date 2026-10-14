@@ -21,6 +21,7 @@ from agent_workflow import run_assurance as run_consumer_duty_assurance
 from motor_finance_workflow import run_assurance as run_motor_finance_assurance
 from remediation_workflow import run_assurance as run_remediation_assurance
 from complaint_redress_workflow import run_complaint_workflow
+from complaint_frl import build_final_response_pdf
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
@@ -859,6 +860,16 @@ async def remediation_report(payload: dict):
         content=pdf_bytes,
         media_type="application/pdf",
         headers={"Content-Disposition": 'attachment; filename="remediation-assurance-report.pdf"'},
+    )
+
+
+@app.post("/api/complaint-redress/final-response.pdf")
+async def complaint_final_response(payload: dict):
+    return Response(
+        content=build_final_response_pdf(payload),
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="final-response-letter-demo.pdf"',
+                 "Cache-Control": "no-store"},
     )
 
 
