@@ -51,7 +51,7 @@ The workflow can also reconstruct the customer journey and highlight where treat
 
 **Example flow**
 
-Customer circumstances â†’ Financial difficulty â†’ Vulnerability / support â†’ Affordability â†’ Contact treatment â†’ Outcome â†’ Human review
+Customer circumstances → Financial difficulty → Vulnerability / support → Affordability → Contact treatment → Outcome → Human review
 
 **Key features**
 
@@ -85,7 +85,7 @@ The workflow is designed to distinguish between what the evidence actually estab
 
 **Example flow**
 
-Agreement â†’ Commission evidence â†’ Arrangement type â†’ Disclosure â†’ Customer evidence â†’ Scheme pathway â†’ Assurance outcome
+Agreement → Commission evidence → Arrangement type → Disclosure → Customer evidence → Scheme pathway → Assurance outcome
 
 **Key features**
 
@@ -118,7 +118,7 @@ The workflow demonstrates:
 
 **Example flow**
 
-Complaint â†’ Evidence â†’ Chronology â†’ Specialist investigation â†’ Methodology check â†’ Decision recommendation â†’ Redress gate â†’ Draft final response â†’ Human approval
+Complaint → Evidence → Chronology → Specialist investigation → Methodology check → Decision recommendation → Redress gate → Draft final response → Human approval
 
 This is a portfolio demonstration only. It does not determine real complaint liability, scheme eligibility or compensation.
 
@@ -329,7 +329,7 @@ This project does **not**:
 The purpose is to demonstrate how agentic AI could support structured review and assurance while preserving human accountability.
 # Final Response Letter PDF
 
-On `/complaint-redress`, run a completed fictional case, review the evidence and decision, then select **Approve**. The **Download Final Response PDF** button appears only after the server accepts approval. Further Investigation, Escalate, missing/unclear evidence, incomplete redress or an unreconciled total cannot produce a final letter. Not-upheld letters always show Â£0.00, even if a prior calculation is present.
+On `/complaint-redress`, run a completed fictional case, review the evidence and decision, then select **Approve**. The **Download Final Response PDF** button appears only after the server accepts approval. Further Investigation, Escalate, missing/unclear evidence, incomplete redress or an unreconciled total cannot produce a final letter. Not-upheld letters always show £0.00, even if a prior calculation is present.
 
 The PDF uses a deterministic customer letter template with evidence, reasons, fictional redress, next steps and illustrative FOS referral wording. It is explicitly a fictional portfolio demonstration, not a regulated communication. No real payment or customer delivery occurs.
 
