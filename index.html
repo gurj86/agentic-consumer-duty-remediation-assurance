@@ -16,7 +16,7 @@ main{margin-top:-34px;padding-bottom:60px}.intro{background:#fff;border:1px soli
 a.button{display:inline-block;margin-top:16px;background:var(--navy);color:#fff;text-decoration:none;font-weight:800;border-radius:10px;padding:11px 15px}
 .note{margin-top:18px;font-size:13px;color:var(--muted)}
 .usage{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 28px rgba(16,24,40,.05)}
-.usage-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#98a2b3;margin-right:6px}.status-dot.live{background:#12b76a}.usage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:13px}.usage-stat{border:1px solid var(--line);border-radius:11px;padding:12px;background:#fbfcfe}.usage-stat b{display:block;font-size:22px}.usage-stat span{font-size:12px;color:var(--muted)}
+.usage-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#98a2b3;margin-right:6px}.status-dot.live{background:#12b76a}.usage-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:13px}.usage-stat{border:1px solid var(--line);border-radius:11px;padding:12px;background:#fbfcfe}.usage-stat b{display:block;font-size:22px}.usage-stat span{font-size:12px;color:var(--muted)}
 @media(max-width:760px){.grid{grid-template-columns:1fr}.usage-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -24,7 +24,7 @@ a.button{display:inline-block;margin-top:16px;background:var(--navy);color:#fff;
 <header><div class="wrap">
 <div class="eyebrow">Gurjit Kaila · Live Portfolio Demonstration</div>
 <h1>Agentic Financial Services Assurance</h1>
-<p class="lead">Three live multi-agent assurance prototypes plus an AI governance and evaluation layer showing how agentic workflows can be tested, challenged, versioned and kept human-led.</p>
+<p class="lead">Four live multi-agent assurance prototypes plus an AI governance and evaluation layer showing how agentic workflows can be tested, challenged, versioned and kept human-led.</p>
 </div></header>
 <main class="wrap">
 <section class="intro">
@@ -44,6 +44,13 @@ a.button{display:inline-block;margin-top:16px;background:var(--navy);color:#fff;
 <p>Agreement and evidence-pack assurance with document uploads, commission and DCA challenge, evidence sufficiency matrix, source traceability and PDF reporting.</p>
 <div><span class="tag">Agreement Uploads</span><span class="tag">Evidence Matrix</span><span class="tag">DCA Classification</span><span class="tag">CONRED / CONC</span><span class="tag">PDF Report</span></div>
 <a class="button" href="/motor-finance">Open live demo →</a>
+</article>
+<article class="demo">
+<div class="eyebrow" style="color:#61708a">End-to-End Motor Finance</div>
+<h2>Complaint-to-Redress Workflow</h2>
+<p>Shows the complaint moving from intake and evidence extraction through chronology, specialist investigation, internal methodology challenge, outcome recommendation, redress readiness and a draft final response for human approval.</p>
+<div><span class="tag">Complaint Intake</span><span class="tag">Case Chronology</span><span class="tag">Specialist Agents</span><span class="tag">Redress Gate</span><span class="tag">Final Response</span></div>
+<a class="button" href="/complaint-redress">Open flagship workflow →</a>
 </article>
 <article class="demo">
 <div class="eyebrow" style="color:#61708a">Programme Assurance</div>
@@ -69,6 +76,7 @@ a.button{display:inline-block;margin-top:16px;background:var(--navy);color:#fff;
 <div class="usage-stat"><b id="usageTotal">—</b><span>Total successful runs</span></div>
 <div class="usage-stat"><b id="usageConsumer">—</b><span>Consumer Duty</span></div>
 <div class="usage-stat"><b id="usageMotor">—</b><span>Motor Finance</span></div>
+<div class="usage-stat"><b id="usageComplaint">—</b><span>Complaint-to-Redress</span></div>
 <div class="usage-stat"><b id="usageRemediation">—</b><span>Redress & Remediation</span></div>
 </div>
 <div class="note" id="usageNote">This counter is a portfolio activity indicator, not your OpenAI billing balance or token usage.</div>
@@ -84,6 +92,7 @@ async function loadUsage(){
   document.getElementById("usageTotal").textContent=data.total_successful_runs ?? 0;
   document.getElementById("usageConsumer").textContent=data.demos?.["consumer-duty"]?.successful_runs ?? 0;
   document.getElementById("usageMotor").textContent=data.demos?.["motor-finance"]?.successful_runs ?? 0;
+  document.getElementById("usageComplaint").textContent=data.demos?.["complaint-redress"]?.successful_runs ?? 0;
   document.getElementById("usageRemediation").textContent=data.demos?.remediation?.successful_runs ?? 0;
   document.getElementById("apiStatus").innerHTML='<span class="status-dot '+(data.api_configured?"live":"")+'"></span>'+(data.api_configured?"API configured":"API not configured");
   document.getElementById("usageNote").textContent="Counters reset when Render restarts or redeploys. This is not your OpenAI billing balance or token usage.";
