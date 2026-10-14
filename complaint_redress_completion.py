@@ -102,3 +102,4 @@ def pdf(token):
         canvas.drawRightString(190*mm, 14*mm, f'Page {doc.page}')
     SimpleDocTemplate(stream, pagesize=A4, rightMargin=20*mm, leftMargin=20*mm, topMargin=20*mm, bottomMargin=24*mm, title='Fictional final response').build(story, onFirstPage=footer, onLaterPages=footer)
     return stream.getvalue()
+
