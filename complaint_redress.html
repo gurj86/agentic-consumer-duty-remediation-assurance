@@ -1,58 +1,146 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Motor Finance Complaint-to-Redress</title>
 <style>
-:root{--navy:#0b1736;--blue:#315fd5;--bg:#f4f7fb;--card:#fff;--line:#dce3ee;--ink:#172033;--muted:#667085;--green:#16794b;--amber:#a15c00;--red:#b42318;--purple:#6941c6}
+:root{--navy:#0b1736;--blue:#315fd5;--bg:#f4f7fb;--card:#fff;--line:#dce3ee;--ink:#172033;--muted:#667085;--green:#16794b;--amber:#a15c00;--red:#b42318}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
-header{background:linear-gradient(120deg,#0b1736,#193b78);color:white;padding:30px 0 46px}.wrap{max-width:1180px;margin:auto;padding:0 22px}
+header{background:linear-gradient(120deg,#0b1736,#193b78);color:#fff;padding:30px 0 48px}.wrap{max-width:1180px;margin:auto;padding:0 22px}
 .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#b9ccff}h1{font-size:clamp(31px,5vw,49px);line-height:1.05;margin:6px 0 11px}.lead{max-width:900px;color:#dce7ff;font-size:17px}
 main{margin-top:-24px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 10px 28px rgba(16,24,40,.07);margin-bottom:16px}
-.notice{background:#fff8ea;border-color:#f0cf8c;color:#654b00}.steps{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}.step{padding:11px 8px;border:1px solid var(--line);border-radius:12px;text-align:center;background:#fbfcfe;font-size:12px;font-weight:800}.step.active{background:#eef3ff;border-color:#93aaf0;color:#234baf}.step.done{background:#ecfdf3;border-color:#a6dbbd;color:#16794b}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{display:block;font-weight:800;font-size:12px;margin-bottom:5px}textarea,input{width:100%;border:1px solid #cad4e2;border-radius:10px;padding:10px;font:inherit}textarea{min-height:100px;resize:vertical}
-.upload{border:1px dashed #aab7ca;border-radius:12px;padding:14px;background:#fafcff}.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);font-weight:800;background:white;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
-.status{font-size:13px;color:var(--muted);margin-top:8px}.results{display:none}.results.show{display:block}.pill{display:inline-block;padding:6px 9px;border-radius:999px;background:#eef3ff;color:#234baf;font-weight:800;font-size:12px}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}.panel h3{margin:0 0 8px}.timeline{border-left:3px solid #b8c7e8;padding-left:14px}.event{margin:0 0 12px}.matrix{width:100%;border-collapse:collapse}.matrix th,.matrix td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top;font-size:13px}.matrix th{background:#f4f7fb}.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:12px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.letter{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}.human{background:#f7f9fc;border:1px solid var(--line);border-radius:12px;padding:14px}.decision-row{display:flex;gap:8px;flex-wrap:wrap}.decision-row button.active{background:var(--navy);color:#fff}
-@media(max-width:950px){.steps{grid-template-columns:repeat(4,1fr)}.grid,.cols{grid-template-columns:1fr}.full{grid-column:auto}}@media(max-width:560px){.steps{grid-template-columns:repeat(2,1fr)}}
+.notice{background:#fff8ea;border-color:#f0cf8c;color:#654b00}.steps{display:grid;grid-template-columns:repeat(9,1fr);gap:8px}.step{padding:10px 7px;border:1px solid var(--line);border-radius:12px;text-align:center;background:#fbfcfe;font-size:12px;font-weight:800}.step.active{background:#eef3ff;border-color:#93aaf0;color:#234baf}.step.done{background:#ecfdf3;border-color:#a6dbbd;color:#16794b}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.full{grid-column:1/-1}label{display:block;font-weight:800;font-size:12px;margin-bottom:5px}textarea,input,select{width:100%;border:1px solid #cad4e2;border-radius:10px;padding:10px;font:inherit;background:#fff}textarea{min-height:100px;resize:vertical}
+.upload{border:1px dashed #aab7ca;border-radius:12px;padding:14px;background:#fafcff}.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);font-weight:800;background:#fff;cursor:pointer}.primary{background:var(--navy);color:#fff;border-color:var(--navy)}.secondary{background:#eef3ff;color:#234baf;border-color:#b6c6ed}
+.status{font-size:13px;color:var(--muted);margin-top:8px}.results{display:none}.results.show{display:block}.pill{display:inline-block;padding:6px 9px;border-radius:999px;background:#eef3ff;color:#234baf;font-weight:800;font-size:12px;margin:3px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}.panel h3{margin:0 0 8px}.timeline{border-left:3px solid #b8c7e8;padding-left:14px}.event{margin:0 0 12px}.matrix{width:100%;border-collapse:collapse}.matrix th,.matrix td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top;font-size:13px}.matrix th{background:#f4f7fb}
+.finding{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:12px;margin:9px 0}.finding.high{border-left-color:var(--red)}.finding.low{border-left-color:var(--green)}.letter{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+.human{background:#f7f9fc;border:1px solid var(--line);border-radius:12px;padding:14px}.decision-row{display:flex;gap:8px;flex-wrap:wrap}.decision-row button.active{background:var(--navy);color:#fff}
+.tabs{display:flex;gap:8px;margin:14px 0}.tab{padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:800}.tab.active{background:var(--navy);color:#fff}.tab-pane{display:none}.tab-pane.active{display:block}
+.section-title{margin:24px 0 8px;font-size:18px}.receipt{display:none;border:1px solid #a6dbbd;background:#ecfdf3;border-radius:14px;padding:16px;margin-top:14px}.receipt.show{display:block}.receipt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.receipt-item{background:#fff;border:1px solid #cae9d7;border-radius:10px;padding:10px}.receipt-item small{display:block;color:var(--muted)}.receipt-item b{font-size:15px}
+.internal{display:none}.internal.show{display:block}.case-banner{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}.case-chip{background:#f8faff;border:1px solid var(--line);border-radius:11px;padding:10px}.case-chip small{display:block;color:var(--muted)}.case-chip b{display:block}
+.radio-row{display:flex;gap:18px;flex-wrap:wrap}.radio-row label{font-weight:600}.radio-row input{width:auto;margin-right:5px}
+.helper{font-size:12px;color:var(--muted);margin-top:4px}
+@media(max-width:950px){.steps{grid-template-columns:repeat(3,1fr)}.grid,.grid3,.cols,.case-banner,.receipt-grid{grid-template-columns:1fr}.full{grid-column:auto}}@media(max-width:560px){.steps{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Motor Finance Complaint-to-Redress</h1><p class="lead">A fictional end-to-end workflow showing complaint intake, evidence extraction, specialist investigation, methodology challenge, outcome recommendation, illustrative redress readiness and a draft final response — with human approval throughout.</p></div></header>
+<header><div class="wrap"><div class="eyebrow">Gurjit Kaila · Portfolio Demonstration</div><h1>Motor Finance Complaint-to-Redress</h1><p class="lead">A fictional end-to-end journey from customer complaint intake through evidence review, specialist investigation, methodology challenge, outcome recommendation, redress readiness and a draft final response — with human approval throughout.</p></div></header>
 <main class="wrap">
-<div class="card notice"><b>Fictional data only.</b> Do not upload real customer, lender, dealer, employer or confidential information. This demo does not make legal, eligibility or compensation decisions.</div>
+<div class="card notice"><b>Fictional data only.</b> This is a portfolio prototype inspired by common motor-finance complaint journeys. It is not affiliated with any lender and must not be used with real customer or confidential information.</div>
 
 <section class="card">
-<div class="eyebrow" style="color:#61708a">End-to-end workflow</div><h2>From complaint to human-approved outcome</h2>
+<div class="eyebrow" style="color:#61708a">End-to-end workflow</div><h2>From customer intake to human-approved outcome</h2>
 <div class="steps" id="steps">
-<div class="step">1 Complaint</div><div class="step">2 Evidence</div><div class="step">3 Chronology</div><div class="step">4 Specialists</div><div class="step">5 Methodology</div><div class="step">6 Decision</div><div class="step">7 Redress</div><div class="step">8 Final Response</div>
+<div class="step">1 Intake</div><div class="step">2 Logged</div><div class="step">3 Evidence</div><div class="step">4 Chronology</div><div class="step">5 Specialists</div><div class="step">6 Methodology</div><div class="step">7 Decision</div><div class="step">8 Redress</div><div class="step">9 Final Response</div>
 </div>
 </section>
 
-<section class="card">
-<h2>Fictional complaint case</h2>
+<section class="card" id="intakeCard">
+<div class="eyebrow" style="color:#61708a">Customer-facing intake</div><h2>Motor finance commission complaint</h2>
+<p class="status">Choose how the fictional complaint arrives. Both routes create the same structured internal case.</p>
+<div class="tabs"><button class="tab active" data-tab="webPane">Web form</button><button class="tab" data-tab="emailPane">Email complaint</button></div>
+
+<div id="webPane" class="tab-pane active">
+<h3 class="section-title">Before you start</h3>
+<div class="radio-row">
+<label><input type="radio" name="eligible" value="Yes" checked> I am complaining about a motor finance agreement</label>
+<label><input type="radio" name="eligible" value="No"> Other</label>
+</div>
+
+<h3 class="section-title">Your details</h3>
+<div class="grid3">
+<div><label>First name</label><input id="firstName" value="Alex"></div>
+<div><label>Last name</label><input id="lastName" value="Morgan"></div>
+<div><label>Email address</label><input id="email" value="alex.morgan@example.test"></div>
+<div><label>Phone number</label><input id="phone" value="07123 456789"></div>
+<div><label>Date of birth</label><input id="dob" type="date" value="1986-05-18"></div>
+<div><label>Postcode</label><input id="postcode" value="AB1 2CD"></div>
+</div>
+
+<h3 class="section-title">About the vehicle and agreement</h3>
+<div class="grid3">
+<div><label>Vehicle registration</label><input id="registration" value="AB18 XYZ"></div>
+<div><label>Vehicle make / model</label><input id="vehicle" value="Ford Focus"></div>
+<div><label>Agreement number</label><input id="agreementNo" value="MF-7842018"></div>
+<div><label>Approximate agreement date</label><input id="agreementDate" type="date" value="2018-06-18"></div>
+<div><label>Dealer / broker</label><input id="dealer" value="Riverside Motors"></div>
+<div><label>Finance type</label><select id="financeType"><option selected>PCP</option><option>Hire Purchase</option><option>Conditional Sale</option><option>Other / unknown</option></select></div>
+</div>
+
+<h3 class="section-title">About your complaint</h3>
 <div class="grid">
-<div><label>Customer complaint</label><textarea id="complaint">I do not remember being told that the dealer would receive commission or that the interest rate could affect what they earned. I believed the dealer was finding the best finance available to me.</textarea></div>
-<div><label>Agreement summary</label><textarea id="agreement">PCP agreement entered in June 2018. Amount financed £18,500 over 48 months. Signed agreement available.</textarea></div>
+<div class="full"><label>Tell us what happened</label><textarea id="webComplaint">I do not remember being told that the dealer would receive commission or that the interest rate could affect what they earned. I believed the dealer was finding the best finance available to me.</textarea></div>
+<div><label>Do you remember being told commission may be paid?</label><select id="commissionTold"><option>No</option><option>Yes</option><option selected>Not sure</option></select></div>
+<div><label>Do you remember being told how commission could be calculated?</label><select id="commissionCalc"><option selected>No</option><option>Yes</option><option>Not sure</option></select></div>
+<div class="full"><label>What outcome are you looking for?</label><textarea id="desiredOutcome">I would like the firm to investigate what commission was paid, explain how the arrangement worked and put things right if I was treated unfairly.</textarea></div>
+</div>
+</div>
+
+<div id="emailPane" class="tab-pane">
+<h3 class="section-title">Paste a fictional customer email</h3>
+<label>Email subject</label><input id="emailSubject" value="Complaint about commission on my car finance">
+<label style="margin-top:10px">Email body</label>
+<textarea id="emailBody" style="min-height:220px">Hello,
+
+I took out car finance in 2018 through Riverside Motors. I have recently heard about complaints involving dealer commission. I do not remember being told the dealer would receive commission or that the interest rate might affect what they earned.
+
+My agreement number is MF-7842018 and the car registration was AB18 XYZ.
+
+Please investigate this and explain what commission was paid and whether I am due anything back.
+
+Thanks,
+Alex Morgan</textarea>
+<div class="helper">The demo will convert this unstructured email into the same internal case fields used by the web form.</div>
+</div>
+
+<div class="upload" style="margin-top:16px">
+<label>Optional fictional supporting documents</label>
+<input id="intakeFiles" type="file" multiple accept=".pdf,.docx,.txt,.csv,.xlsx">
+<div class="helper">Any uploaded documents are only carried into the internal case after extraction.</div>
+</div>
+
+<div class="actions"><button class="secondary" id="loadCustomerExample">Load fictional example</button><button class="primary" id="submitComplaint">Submit fictional complaint</button></div>
+<div class="status" id="intakeStatus">Ready to submit.</div>
+
+<div class="receipt" id="receipt">
+<h3 style="margin-top:0">Complaint received</h3>
+<div class="receipt-grid">
+<div class="receipt-item"><small>Reference</small><b id="receiptRef">—</b></div>
+<div class="receipt-item"><small>Channel</small><b id="receiptChannel">—</b></div>
+<div class="receipt-item"><small>Status</small><b>Received</b></div>
+<div class="receipt-item"><small>Complaint theme</small><b>Commission / disclosure</b></div>
+</div>
+<p style="margin-bottom:0"><b>Next step:</b> create the internal case, validate the agreement and assemble the evidence pack.</p>
+<div class="actions"><button class="primary" id="openInternal">Open internal case →</button></div>
+</div>
+</section>
+
+<section class="card internal" id="internalCase">
+<div class="eyebrow" style="color:#61708a">Firm-side case workspace</div><h2>Internal complaint case</h2>
+<div class="case-banner">
+<div class="case-chip"><small>Case reference</small><b id="caseRef">—</b></div>
+<div class="case-chip"><small>Channel</small><b id="caseChannel">—</b></div>
+<div class="case-chip"><small>Customer</small><b id="caseCustomer">—</b></div>
+<div class="case-chip"><small>Agreement</small><b id="caseAgreement">—</b></div>
+<div class="case-chip"><small>Status</small><b>Investigation</b></div>
+</div>
+<div class="grid">
+<div><label>Customer complaint</label><textarea id="complaint"></textarea></div>
+<div><label>Agreement summary</label><textarea id="agreement"></textarea></div>
 <div><label>Commission / arrangement evidence</label><textarea id="commission">Lender extract records £1,240 commission and a DCA system flag. Original dealer commission schedule has not been located. No source document currently explains the dealer's rate-setting discretion.</textarea></div>
-<div><label>Disclosure / customer evidence</label><textarea id="disclosure">Signed agreement states the dealer may receive commission in general terms. No separate commission disclosure has been located. Customer says the commission amount and rate-linked incentive were not explained.</textarea></div>
-<div class="full"><label>Fictional internal methodology</label><textarea id="methodology">For this training demo, a final complaint outcome requires evidence sufficient to classify the arrangement, assess disclosure and resolve material contradictions. A DCA flag alone is not treated as conclusive if the underlying mechanism is missing. Redress may only progress after a human approves the complaint outcome and confirms the applicable methodology and calculation inputs.</textarea></div>
+<div><label>Disclosure / customer evidence</label><textarea id="disclosure"></textarea></div>
+<div class="full"><label>Fictional internal methodology</label><textarea id="methodology">For this training demo, a final complaint outcome requires evidence sufficient to classify the arrangement, assess disclosure and resolve material contradictions. A DCA system flag is an indicator but is not sufficient by itself where the underlying rate-setting mechanism cannot be evidenced. Where key evidence is unavailable, the case must be referred for further investigation before redress is considered.</textarea></div>
 <div><label>Illustrative redress inputs</label><textarea id="redress">Commission recorded: £1,240. No approved real-world redress formula is supplied in this demo. If the complaint is upheld, the human reviewer must confirm the applicable calculation methodology before any amount is approved.</textarea></div>
 <div><label>Existing case notes / rationale</label><textarea id="notes">Initial reviewer considers the DCA flag and commission payment sufficient to uphold the complaint without further document retrieval.</textarea></div>
-<div class="full upload"><label>Optional fictional evidence files (PDF, DOCX, TXT, CSV, XLSX — max 3 files, 2 MB each)</label><input id="files" type="file" multiple accept=".pdf,.docx,.txt,.csv,.xlsx"><div class="actions"><button id="extract">Extract Evidence</button></div><div class="status" id="extractStatus">No evidence file extracted yet.</div></div>
+<div class="full upload"><label>Evidence files carried into internal case (PDF, DOCX, TXT, CSV, XLSX — max 3 files, 2 MB each)</label><input id="files" type="file" multiple accept=".pdf,.docx,.txt,.csv,.xlsx"><div class="actions"><button id="extract">Extract Evidence</button></div><div class="status" id="extractStatus">No evidence file extracted yet.</div></div>
 </div>
-<div class="actions"><button id="reset">Load Example</button><button class="primary" id="run">Run End-to-End Workflow</button></div><div class="status" id="status">Ready.</div>
+<div class="actions"><button id="reset">Reset internal example</button><button class="primary" id="run">Run End-to-End Workflow</button></div><div class="status" id="status">Ready.</div>
 </section>
 
 <section class="card results" id="results">
-<div class="eyebrow" style="color:#61708a">Workflow output</div>
-<h2 id="recommendation">—</h2><span class="pill" id="category">—</span>
-<p id="summary"></p>
-<div class="cols">
-<div class="panel"><h3>Case chronology</h3><div class="timeline" id="timeline"></div></div>
-<div class="panel"><h3>Evidence sufficiency</h3><table class="matrix"><thead><tr><th>Item</th><th>Status</th><th>Observation</th></tr></thead><tbody id="matrix"></tbody></table></div>
-</div>
+<div class="eyebrow" style="color:#61708a">Workflow output</div><h2 id="recommendation">—</h2><span class="pill" id="category">—</span><p id="summary"></p>
+<div class="cols"><div class="panel"><h3>Case chronology</h3><div class="timeline" id="timeline"></div></div><div class="panel"><h3>Evidence sufficiency</h3><table class="matrix"><thead><tr><th>Item</th><th>Status</th><th>Observation</th></tr></thead><tbody id="matrix"></tbody></table></div></div>
 <div class="panel" style="margin-top:14px"><h3>Specialist agents consulted</h3><div id="agents"></div></div>
 <div class="panel" style="margin-top:14px"><h3>Methodology & redress gate</h3><p id="methodologyCheck"></p><p><b>Redress status:</b> <span id="redressStatus"></span></p></div>
 <div id="findings"></div>
@@ -62,31 +150,24 @@ main{margin-top:-24px;padding-bottom:50px}.card{background:#fff;border:1px solid
 </section>
 </main>
 <script>
-let uploadedEvidence="";
-const example={
-complaint:"I do not remember being told that the dealer would receive commission or that the interest rate could affect what they earned. I believed the dealer was finding the best finance available to me.",
-agreement:"PCP agreement entered in June 2018. Amount financed £18,500 over 48 months. Signed agreement available.",
+let uploadedEvidence="",caseReference="",activeChannel="Web form";
+const internalExample={
 commission:"Lender extract records £1,240 commission and a DCA system flag. Original dealer commission schedule has not been located. No source document currently explains the dealer's rate-setting discretion.",
-disclosure:"Signed agreement states the dealer may receive commission in general terms. No separate commission disclosure has been located. Customer says the commission amount and rate-linked incentive were not explained.",
-methodology:"For this training demo, a final complaint outcome requires evidence sufficient to classify the arrangement, assess disclosure and resolve material contradictions. A DCA flag alone is not treated as conclusive if the underlying mechanism is missing. Redress may only progress after a human approves the complaint outcome and confirms the applicable methodology and calculation inputs.",
+methodology:"For this training demo, a final complaint outcome requires evidence sufficient to classify the arrangement, assess disclosure and resolve material contradictions. A DCA system flag is an indicator but is not sufficient by itself where the underlying rate-setting mechanism cannot be evidenced. Where key evidence is unavailable, the case must be referred for further investigation before redress is considered.",
 redress:"Commission recorded: £1,240. No approved real-world redress formula is supplied in this demo. If the complaint is upheld, the human reviewer must confirm the applicable calculation methodology before any amount is approved.",
 notes:"Initial reviewer considers the DCA flag and commission payment sufficient to uphold the complaint without further document retrieval."
 };
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 function setSteps(n){document.querySelectorAll(".step").forEach((s,i)=>{s.classList.remove("active","done");if(i<n-1)s.classList.add("done");else if(i===n-1)s.classList.add("active")})}
-document.getElementById("reset").onclick=()=>{for(const[k,v]of Object.entries(example))document.getElementById(k).value=v;uploadedEvidence="";document.getElementById("extractStatus").textContent="No evidence file extracted yet.";document.getElementById("results").classList.remove("show");setSteps(1)};
-document.getElementById("extract").onclick=async()=>{const files=document.getElementById("files").files;if(!files.length)return document.getElementById("extractStatus").textContent="Choose at least one fictional file first.";const fd=new FormData();[...files].forEach(f=>fd.append("files",f));document.getElementById("extractStatus").textContent="Extracting evidence…";try{const r=await fetch("/api/complaint-redress/extract",{method:"POST",body:fd});const d=await r.json();if(!r.ok)throw new Error(d.detail||"Extraction failed");uploadedEvidence=d.files.map(f=>"=== FILE: "+f.filename+" ===\n"+f.text).join("\n\n");document.getElementById("extractStatus").textContent=d.files.length+" file(s) extracted successfully.";setSteps(2)}catch(e){document.getElementById("extractStatus").textContent=e.message}};
+function ref(){return "MF-"+new Date().getFullYear()+"-"+String(Date.now()).slice(-6)}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab,.tab-pane").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.tab).classList.add("active");activeChannel=b.dataset.tab==="emailPane"?"Email":"Web form"});
+document.getElementById("loadCustomerExample").onclick=()=>{document.getElementById("webComplaint").value="I do not remember being told that the dealer would receive commission or that the interest rate could affect what they earned. I believed the dealer was finding the best finance available to me.";document.getElementById("desiredOutcome").value="I would like the firm to investigate what commission was paid, explain how the arrangement worked and put things right if I was treated unfairly.";document.getElementById("emailBody").value="Hello,\n\nI took out car finance in 2018 through Riverside Motors. I have recently heard about complaints involving dealer commission. I do not remember being told the dealer would receive commission or that the interest rate might affect what they earned.\n\nMy agreement number is MF-7842018 and the car registration was AB18 XYZ.\n\nPlease investigate this and explain what commission was paid and whether I am due anything back.\n\nThanks,\nAlex Morgan";document.getElementById("intakeStatus").textContent="Fictional example loaded."};
+document.getElementById("submitComplaint").onclick=()=>{caseReference=ref();const isEmail=activeChannel==="Email";const complaintText=isEmail?document.getElementById("emailBody").value:document.getElementById("webComplaint").value;if(!complaintText.trim())return document.getElementById("intakeStatus").textContent="Add a fictional complaint before submitting.";document.getElementById("receiptRef").textContent=caseReference;document.getElementById("receiptChannel").textContent=activeChannel;document.getElementById("receipt").classList.add("show");document.getElementById("intakeStatus").textContent="Complaint logged successfully.";setSteps(2)};
+document.getElementById("openInternal").onclick=()=>{const isEmail=activeChannel==="Email";const customer=(document.getElementById("firstName").value+" "+document.getElementById("lastName").value).trim()||"Fictional customer";const complaintText=isEmail?("Email subject: "+document.getElementById("emailSubject").value+"\n\n"+document.getElementById("emailBody").value):document.getElementById("webComplaint").value+"\n\nDesired outcome: "+document.getElementById("desiredOutcome").value;const agreementNo=document.getElementById("agreementNo").value||"Not supplied";const reg=document.getElementById("registration").value||"Not supplied";const date=document.getElementById("agreementDate").value||"Approximate date not supplied";const dealer=document.getElementById("dealer").value||"Dealer not supplied";const finance=document.getElementById("financeType").value;document.getElementById("complaint").value=complaintText;document.getElementById("agreement").value=finance+" agreement. Agreement number "+agreementNo+". Agreement date "+date+". Vehicle registration "+reg+". Dealer / broker: "+dealer+".";document.getElementById("disclosure").value="Customer intake says commission disclosure: "+document.getElementById("commissionTold").value+". Customer recalls being told how commission was calculated: "+document.getElementById("commissionCalc").value+". No separate lender evidence has yet been validated.";document.getElementById("caseRef").textContent=caseReference;document.getElementById("caseChannel").textContent=activeChannel;document.getElementById("caseCustomer").textContent=customer;document.getElementById("caseAgreement").textContent=agreementNo;const intakeFiles=document.getElementById("intakeFiles").files;if(intakeFiles.length){const dt=new DataTransfer();[...intakeFiles].forEach(file=>dt.items.add(file));document.getElementById("files").files=dt.files;document.getElementById("extractStatus").textContent=intakeFiles.length+" intake file(s) carried into the internal case. Click Extract Evidence."}document.getElementById("internalCase").classList.add("show");document.getElementById("internalCase").scrollIntoView({behavior:"smooth",block:"start"});setSteps(3)};
+document.getElementById("reset").onclick=()=>{for(const[k,v]of Object.entries(internalExample))document.getElementById(k).value=v;uploadedEvidence="";document.getElementById("extractStatus").textContent="No evidence file extracted yet.";document.getElementById("results").classList.remove("show");setSteps(3)};
+document.getElementById("extract").onclick=async()=>{const files=document.getElementById("files").files;if(!files.length)return document.getElementById("extractStatus").textContent="Choose at least one fictional file first.";const fd=new FormData();[...files].forEach(f=>fd.append("files",f));document.getElementById("extractStatus").textContent="Extracting evidence…";try{const r=await fetch("/api/complaint-redress/extract",{method:"POST",body:fd});const d=await r.json();if(!r.ok)throw new Error(d.detail||"Extraction failed");uploadedEvidence=d.files.map(f=>"=== FILE: "+f.filename+" ===\n"+f.text).join("\n\n");document.getElementById("extractStatus").textContent=d.files.length+" file(s) extracted successfully.";setSteps(4)}catch(e){document.getElementById("extractStatus").textContent=e.message}};
 document.querySelectorAll("[data-decision]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-decision]").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("humanDecision").textContent="Human decision recorded: "+b.dataset.decision+" (demo only)."});
-document.getElementById("run").onclick=async()=>{const btn=document.getElementById("run"),status=document.getElementById("status");btn.disabled=true;status.textContent="Lead agent is running the complaint-to-redress workflow…";setSteps(3);const body={
-complaint_text:document.getElementById("complaint").value,
-agreement_summary:document.getElementById("agreement").value,
-commission_arrangement_evidence:document.getElementById("commission").value,
-disclosure_customer_evidence:document.getElementById("disclosure").value,
-internal_methodology:document.getElementById("methodology").value,
-illustrative_redress_inputs:document.getElementById("redress").value,
-case_notes:document.getElementById("notes").value,
-uploaded_evidence:uploadedEvidence
-};try{const r=await fetch("/api/complaint-redress/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.detail||"Workflow failed");setSteps(8);document.getElementById("recommendation").textContent=d.recommendation;document.getElementById("category").textContent=d.complaint_category;document.getElementById("summary").textContent=d.complaint_summary+" "+d.rationale;document.getElementById("timeline").innerHTML=(d.chronology||[]).map(x=>'<div class="event"><b>'+esc(x.date_or_stage)+'</b><br>'+esc(x.event)+'<br><small>'+esc(x.source)+'</small></div>').join("");document.getElementById("matrix").innerHTML=(d.evidence_matrix||[]).map(x=>'<tr><td>'+esc(x.item)+'</td><td><b>'+esc(x.status)+'</b></td><td>'+esc(x.observation)+'</td></tr>').join("");document.getElementById("agents").innerHTML=(d.agents_consulted||[]).map(x=>'<span class="pill" style="margin:3px">'+esc(x)+'</span>').join("");document.getElementById("methodologyCheck").textContent=d.methodology_check;document.getElementById("redressStatus").textContent=d.redress_trigger;document.getElementById("findings").innerHTML=(d.findings||[]).map(f=>'<div class="finding '+esc(f.severity)+'"><b>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</b><p>'+esc(f.finding)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Next action:</b> '+esc(f.next_action)+'</p></div>').join("");document.getElementById("missing").innerHTML=(d.missing_evidence||[]).map(x=>'<li>'+esc(x)+'</li>').join("");document.getElementById("letter").textContent=d.final_response_draft;document.getElementById("humanNote").textContent=d.human_review_note;document.getElementById("results").classList.add("show");document.getElementById("results").scrollIntoView({behavior:"smooth",block:"start"});status.textContent="Workflow complete. Human approval remains required."}catch(e){status.textContent=e.message}finally{btn.disabled=false}};
+document.getElementById("run").onclick=async()=>{const btn=document.getElementById("run"),status=document.getElementById("status");btn.disabled=true;status.textContent="Lead agent is running the complaint-to-redress workflow…";setSteps(4);const body={complaint_text:document.getElementById("complaint").value,agreement_summary:document.getElementById("agreement").value,commission_arrangement_evidence:document.getElementById("commission").value,disclosure_customer_evidence:document.getElementById("disclosure").value,internal_methodology:document.getElementById("methodology").value,illustrative_redress_inputs:document.getElementById("redress").value,case_notes:"Case reference: "+caseReference+". Intake channel: "+activeChannel+". "+document.getElementById("notes").value,uploaded_evidence:uploadedEvidence};try{const r=await fetch("/api/complaint-redress/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.detail||"Workflow failed");setSteps(9);document.getElementById("recommendation").textContent=d.recommendation;document.getElementById("category").textContent=d.complaint_category;document.getElementById("summary").textContent=d.complaint_summary+" "+d.rationale;document.getElementById("timeline").innerHTML=(d.chronology||[]).map(x=>'<div class="event"><b>'+esc(x.date_or_stage)+'</b><br>'+esc(x.event)+'<br><small>'+esc(x.source)+'</small></div>').join("");document.getElementById("matrix").innerHTML=(d.evidence_matrix||[]).map(x=>'<tr><td>'+esc(x.item)+'</td><td><b>'+esc(x.status)+'</b></td><td>'+esc(x.observation)+'</td></tr>').join("");document.getElementById("agents").innerHTML=(d.agents_consulted||[]).map(x=>'<span class="pill">'+esc(x)+'</span>').join("");document.getElementById("methodologyCheck").textContent=d.methodology_check;document.getElementById("redressStatus").textContent=d.redress_trigger;document.getElementById("findings").innerHTML=(d.findings||[]).map(f=>'<div class="finding '+esc(f.severity)+'"><b>'+esc(f.area)+' · '+esc(f.severity).toUpperCase()+'</b><p>'+esc(f.finding)+'</p><p><b>Why it matters:</b> '+esc(f.why_it_matters)+'</p><p><b>Next action:</b> '+esc(f.next_action)+'</p></div>').join("");document.getElementById("missing").innerHTML=(d.missing_evidence||[]).map(x=>'<li>'+esc(x)+'</li>').join("");document.getElementById("letter").textContent=d.final_response_draft;document.getElementById("humanNote").textContent=d.human_review_note;document.getElementById("results").classList.add("show");document.getElementById("results").scrollIntoView({behavior:"smooth",block:"start"});status.textContent="Workflow complete. Human approval remains required."}catch(e){status.textContent=e.message}finally{btn.disabled=false}};
 setSteps(1);
 </script>
 </body></html>
