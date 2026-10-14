@@ -2,10 +2,11 @@
 
 A live portfolio demonstrating how **multi-agent AI workflows** can support assurance, remediation and quality review in UK financial services while keeping the final decision with a human reviewer.
 
-The portfolio currently includes three agentic assurance workflows plus a governance and evaluation layer:
+The portfolio currently includes four agentic workflows plus a governance and evaluation layer:
 
 - **Consumer Duty / Collections Assurance**
 - **Motor Finance Remediation Assurance**
+- **Motor Finance Complaint-to-Redress Workflow**
 - **Redress & Remediation Programme Assurance**
 - **AI Governance & Evaluation Dashboard**
 
@@ -99,7 +100,31 @@ Agreement → Commission evidence → Arrangement type → Disclosure → Custom
 
 ---
 
-## 3. Redress & Remediation Programme Assurance
+## 3. Motor Finance Complaint-to-Redress Workflow
+
+An end-to-end fictional motor-finance complaint workflow designed to show how agentic AI can support more than a single assurance decision.
+
+The workflow demonstrates:
+
+- complaint intake and issue classification;
+- evidence upload and extraction;
+- automatic case chronology;
+- specialist review of commission, arrangement classification, disclosure and evidence quality;
+- comparison against a fictional internal methodology;
+- a structured outcome recommendation;
+- a redress-readiness gate rather than an autonomous compensation decision;
+- a draft final response for human approval; and
+- explicit human approval / further-investigation / escalation controls.
+
+**Example flow**
+
+Complaint → Evidence → Chronology → Specialist investigation → Methodology check → Decision recommendation → Redress gate → Draft final response → Human approval
+
+This is a portfolio demonstration only. It does not determine real complaint liability, scheme eligibility or compensation.
+
+---
+
+## 4. Redress & Remediation Programme Assurance
 
 A programme-level assurance workflow designed to challenge whether a remediation exercise is genuinely ready for closure.
 
@@ -130,7 +155,7 @@ This moves the use case beyond reviewing a single customer file and into **remed
 
 ---
 
-## 4. AI Governance & Evaluation Dashboard
+## 5. AI Governance & Evaluation Dashboard
 
 The Evaluation & Control Dashboard tests the existing agentic workflows rather than replacing them.
 
@@ -271,6 +296,7 @@ Available routes:
 ```text
 /consumer-duty
 /motor-finance
+/complaint-redress
 /remediation
 /evaluation
 ```
