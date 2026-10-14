@@ -2,6 +2,7 @@ import csv
 import io
 import os
 import time
+import secrets
 from collections import defaultdict, deque
 from pathlib import Path
 
@@ -21,6 +22,25 @@ from agent_workflow import run_assurance as run_consumer_duty_assurance
 from motor_finance_workflow import run_assurance as run_motor_finance_assurance
 from remediation_workflow import run_assurance as run_remediation_assurance
 from complaint_redress_workflow import run_complaint_workflow
+from complaint_final_response import require_complete, build_final_response
+
+# Short-lived, bounded server snapshots; browser-supplied results cannot issue letters.
+_complaint_cases = {}
+COMPLAINT_TTL = 3600
+
+class ComplaintReview(BaseModel):
+    case_id: str
+    decision: str
+
+def _complaint_snapshot(case_id):
+    now = time.time()
+    for key in list(_complaint_cases):
+        if now - _complaint_cases[key]["created"] > COMPLAINT_TTL:
+            del _complaint_cases[key]
+    snapshot = _complaint_cases.get(case_id)
+    if not snapshot:
+        raise HTTPException(404, "Case expired or unavailable. Run the workflow again.")
+    return snapshot
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
@@ -826,13 +846,45 @@ async def complaint_redress_run(case: ComplaintRedressInput, request: Request):
     try:
         result = await run_complaint_workflow(case.model_dump())
         _record_demo_run("complaint-redress", True)
-        return result.model_dump()
+        case_id = secrets.token_urlsafe(32)
+        if len(_complaint_cases) >= 200:
+            del _complaint_cases[next(iter(_complaint_cases))]
+        data = result.model_dump()
+        _complaint_cases[case_id] = {"result": data, "created": time.time(), "approved_at": None, "reference": "MF-DEMO-" + secrets.token_hex(4).upper()}
+        return {**data, "case_id": case_id}
     except HTTPException:
         _record_demo_run("complaint-redress", False)
         raise
     except Exception as exc:
         _record_demo_run("complaint-redress", False)
         raise HTTPException(status_code=500, detail=f"Complaint-to-redress workflow failed: {exc}") from exc
+
+
+@app.post("/api/complaint-redress/decision")
+async def complaint_decision(review: ComplaintReview):
+    snapshot = _complaint_snapshot(review.case_id)
+    snapshot["approved_at"] = None
+    if review.decision not in {"Approve", "Further Investigation", "Escalate"}:
+        raise HTTPException(400, "Unsupported reviewer decision.")
+    if review.decision == "Approve":
+        try:
+            require_complete(snapshot["result"])
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        snapshot["approved_at"] = time.time()
+    return {"pdf_available": snapshot["approved_at"] is not None}
+
+
+@app.post("/api/complaint-redress/final-response-pdf")
+async def complaint_final_pdf(review: ComplaintReview):
+    snapshot = _complaint_snapshot(review.case_id)
+    if not snapshot["approved_at"]:
+        raise HTTPException(409, "Human approval is required before downloading a final response.")
+    try:
+        data = build_final_response(snapshot["result"], snapshot["reference"], snapshot["approved_at"])
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
+    return Response(data, media_type="application/pdf", headers={"Content-Disposition": 'attachment; filename="fictional-final-response-letter.pdf"', "Cache-Control": "no-store"})
 
 
 @app.post("/api/remediation/review")
