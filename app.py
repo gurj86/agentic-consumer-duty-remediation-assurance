@@ -20,6 +20,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from agent_workflow import run_assurance as run_consumer_duty_assurance
 from motor_finance_workflow import run_assurance as run_motor_finance_assurance
 from remediation_workflow import run_assurance as run_remediation_assurance
+from complaint_redress_workflow import run_complaint_workflow
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
@@ -40,6 +41,7 @@ _demo_usage = {
     "consumer-duty": {"successful_runs": 0, "failed_runs": 0},
     "motor-finance": {"successful_runs": 0, "failed_runs": 0},
     "remediation": {"successful_runs": 0, "failed_runs": 0},
+    "complaint-redress": {"successful_runs": 0, "failed_runs": 0},
 }
 
 WORKFLOW_VERSION = "1.1"
@@ -172,6 +174,17 @@ class RemediationProgrammeInput(BaseModel):
     redress_methodology: str
     qa_outcome_testing: str
     governance_closure: str
+    uploaded_evidence: str = ""
+
+
+class ComplaintRedressInput(BaseModel):
+    complaint_text: str
+    agreement_summary: str
+    commission_arrangement_evidence: str
+    disclosure_customer_evidence: str
+    internal_methodology: str
+    illustrative_redress_inputs: str
+    case_notes: str
     uploaded_evidence: str = ""
 
 
@@ -673,6 +686,12 @@ async def remediation_page():
         return f.read()
 
 
+@app.get("/complaint-redress", response_class=HTMLResponse)
+async def complaint_redress_page():
+    with open("complaint_redress.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
 @app.get("/api/evaluation/benchmarks")
 async def evaluation_benchmarks():
     return {
@@ -733,10 +752,11 @@ async def health():
     return {
         "status": "ok",
         "agentic_mode": bool(os.getenv("OPENAI_API_KEY")),
-        "demos": ["consumer-duty", "motor-finance", "remediation", "evaluation-governance"],
+        "demos": ["consumer-duty", "motor-finance", "remediation", "complaint-redress", "evaluation-governance"],
         "remediation_features": ["document-extraction", "evidence-traceability", "risk-dashboard", "rca-flow", "pdf-report"],
         "motor_finance_features": ["agreement-evidence-upload", "evidence-matrix", "evidence-flow", "pdf-report"],
         "consumer_duty_features": ["journey-evidence-upload", "customer-journey", "evidence-traceability", "pdf-report"],
+        "complaint_redress_features": ["complaint-intake", "document-extraction", "chronology", "specialist-review", "methodology-check", "outcome-recommendation", "redress-gate", "draft-final-response", "human-approval"],
     }
 
 
@@ -790,6 +810,29 @@ async def motor_finance_extract(request: Request, files: list[UploadFile] = File
 async def consumer_duty_extract(request: Request, files: list[UploadFile] = File(...)):
     _check_rate_limit(request)
     return await _extract_uploaded_files(files)
+
+
+@app.post("/api/complaint-redress/extract")
+async def complaint_redress_extract(request: Request, files: list[UploadFile] = File(...)):
+    _check_rate_limit(request)
+    return await _extract_uploaded_files(files)
+
+
+@app.post("/api/complaint-redress/run")
+async def complaint_redress_run(case: ComplaintRedressInput, request: Request):
+    _require_api_key()
+    _check_rate_limit(request)
+    _validate_demo_input(case)
+    try:
+        result = await run_complaint_workflow(case.model_dump())
+        _record_demo_run("complaint-redress", True)
+        return result.model_dump()
+    except HTTPException:
+        _record_demo_run("complaint-redress", False)
+        raise
+    except Exception as exc:
+        _record_demo_run("complaint-redress", False)
+        raise HTTPException(status_code=500, detail=f"Complaint-to-redress workflow failed: {exc}") from exc
 
 
 @app.post("/api/remediation/review")
