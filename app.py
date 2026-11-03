@@ -22,9 +22,44 @@ from motor_finance_workflow import run_assurance as run_motor_finance_assurance
 from remediation_workflow import run_assurance as run_remediation_assurance
 from complaint_redress_workflow import run_complaint_workflow
 from complaint_frl import build_final_response_pdf
+from vehicle_quality_workflow import VehicleQualityInput, run_vehicle_review
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
+
+
+@app.get("/vehicle-quality", response_class=HTMLResponse)
+async def vehicle_quality_page():
+    return Path(__file__).with_name("vehicle_quality.html").read_text(encoding="utf-8")
+
+
+@app.post("/api/vehicle-quality/extract")
+async def vehicle_quality_extract(request: Request, files: list[UploadFile] = File(...)):
+    _check_rate_limit(request)
+    return await _extract_uploaded_files(files)
+
+
+@app.post("/api/vehicle-quality/run")
+async def vehicle_quality_run(case: VehicleQualityInput, request: Request):
+    _require_api_key()
+    _check_rate_limit(request)
+    _validate_demo_input(case)
+    try:
+        result = await run_vehicle_review(case.model_dump())
+        return result.model_dump()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="Vehicle-quality workflow could not complete. Please try again.") from exc
+
+
+@app.post("/api/vehicle-quality/final-response.pdf")
+async def vehicle_quality_final_response(payload: dict):
+    return Response(
+        content=build_final_response_pdf(payload), media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="vehicle-quality-final-response.pdf"', "Cache-Control": "no-store"},
+    )
+
 
 MAX_FIELD_CHARS = 12000
 RATE_LIMIT = 8
@@ -905,3 +940,5 @@ async def consumer_duty_report(payload: dict):
 @app.post("/api/review")
 async def legacy_consumer_duty_review(case: ConsumerDutyCaseInput, request: Request):
     return await consumer_duty_review(case, request)
+
+

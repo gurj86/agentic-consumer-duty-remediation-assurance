@@ -317,6 +317,24 @@ This is a **non-production portfolio demonstration** designed to show agentic wo
 
 ## Important boundary
 
+### Vehicle repair / satisfactory-quality complaints
+
+The switch tabs on `/complaint-redress` and `/vehicle-quality` connect commission complaints
+and vehicle repair / satisfactory-quality complaints. Both use the same page layout and
+flow: web/email intake, receipt, internal case, evidence extraction, specialist investigation,
+methodology, redress, human approval and Final Response PDF.
+
+Vehicle review uses the existing server-side AI setup and upload/rate-limit controls.
+Incomplete investigations block final response and redress. Fictional examples cover a
+persistent fault after repair and a case with missing technical evidence. Any impact-redress
+proposal is separate from an agreement unwind requiring approved reconciliation.
+
+Verification: `python -m unittest test_vehicle_quality -v`,
+`node test_vehicle_frontend.cjs` and `node test_complaint_frontend.cjs`.
+Tests mock model calls; a real model run still needs deployment verification.
+
+---
+
 This project does **not**:
 
 - provide legal or regulatory advice;
@@ -327,3 +345,5 @@ This project does **not**:
 - represent a production deployment for a client or financial-services firm.
 
 The purpose is to demonstrate how agentic AI could support structured review and assurance while preserving human accountability.
+
+
