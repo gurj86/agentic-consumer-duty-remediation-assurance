@@ -22,9 +22,32 @@ from motor_finance_workflow import run_assurance as run_motor_finance_assurance
 from remediation_workflow import run_assurance as run_remediation_assurance
 from complaint_redress_workflow import run_complaint_workflow
 from complaint_frl import build_final_response_pdf
+from vehicle_quality_workflow import ReviewRequest, VehicleCase, BASE_CASE, GAP_CASE, walkthrough, run_vehicle_review
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
+
+
+@app.get("/vehicle-quality", response_class=HTMLResponse)
+async def vehicle_quality_page():
+    return Path(__file__).with_name("vehicle_quality.html").read_text(encoding="utf-8")
+
+
+@app.get("/api/vehicle-quality/examples")
+async def vehicle_quality_examples():
+    return {"complete": BASE_CASE, "gap": GAP_CASE}
+
+
+@app.post("/api/vehicle-quality/run")
+async def vehicle_quality_run(case: ReviewRequest, request: Request):
+    if case.mode == "walkthrough":
+        return walkthrough(case.scenario)
+    _require_api_key()
+    _check_rate_limit(request)
+    try:
+        return await run_vehicle_review(VehicleCase(**case.model_dump(exclude={"mode", "scenario"})))
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="Vehicle-quality review could not complete. Try again or use the interview walkthrough.") from exc
 
 MAX_FIELD_CHARS = 12000
 RATE_LIMIT = 8
@@ -905,3 +928,5 @@ async def consumer_duty_report(payload: dict):
 @app.post("/api/review")
 async def legacy_consumer_duty_review(case: ConsumerDutyCaseInput, request: Request):
     return await consumer_duty_review(case, request)
+
+

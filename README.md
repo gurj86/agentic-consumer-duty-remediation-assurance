@@ -317,6 +317,41 @@ This is a **non-production portfolio demonstration** designed to show agentic wo
 
 ## Important boundary
 
+### Vehicle / satisfactory-quality complaint workflow
+
+Open `/complaint-redress` and select **Vehicle / satisfactory quality**, or go directly to `/vehicle-quality`.
+The original commission workflow remains available in the adjacent tab.
+
+The new journey covers logging, evidence chronology, technical fault and repair review,
+customer impact, proposed remedies, redress review, a human decision and simulated fulfilment.
+Two fictional BMW vehicle examples demonstrate a supported persistent fault and a disputed
+cause with missing evidence. Neither example represents a BMW customer or internal policy.
+
+- **Interview walkthrough:** fixed fictional evidence summaries and scripted agent hand-offs;
+  no AI call or API key required. Fields are read-only in this mode.
+- **Live review:** editable fictional evidence summaries reviewed through the existing
+  OpenAI Agents SDK / server-side API-key setup. Actual tool calls are returned separately
+  from the AI-generated findings. Existing demo rate limits apply.
+- Materially incomplete investigations block redress and final-response drafting.
+- Human decisions require a rationale, and editing the case or rationale invalidates approval.
+- Downloads contain a JSON review record. Approval and fulfilment are browser-session
+  demonstrations only; no payment, communication or agreement settlement is executed.
+- The illustrative £655 impact proposal excludes any agreement unwind, use deduction,
+  deposit refund or interest. Finance settlement needs separate approved reconciliation.
+
+Verification (from the repository directory, with dependencies installed):
+
+```text
+python -m unittest test_vehicle_quality -v
+node test_vehicle_frontend.cjs
+node test_complaint_frontend.cjs
+```
+
+The Python tests isolate the added HTTP routes from unrelated document libraries and
+mock the AI runner. Live model output still requires a configured deployment smoke test.
+
+---
+
 This project does **not**:
 
 - provide legal or regulatory advice;
@@ -327,3 +362,5 @@ This project does **not**:
 - represent a production deployment for a client or financial-services firm.
 
 The purpose is to demonstrate how agentic AI could support structured review and assurance while preserving human accountability.
+
+
