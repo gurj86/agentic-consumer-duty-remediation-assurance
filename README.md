@@ -317,38 +317,21 @@ This is a **non-production portfolio demonstration** designed to show agentic wo
 
 ## Important boundary
 
-### Vehicle / satisfactory-quality complaint workflow
+### Vehicle repair / satisfactory-quality complaints
 
-Open `/complaint-redress` and select **Vehicle / satisfactory quality**, or go directly to `/vehicle-quality`.
-The original commission workflow remains available in the adjacent tab.
+The switch tabs on `/complaint-redress` and `/vehicle-quality` connect commission complaints
+and vehicle repair / satisfactory-quality complaints. Both use the same page layout and
+flow: web/email intake, receipt, internal case, evidence extraction, specialist investigation,
+methodology, redress, human approval and Final Response PDF.
 
-The new journey covers logging, evidence chronology, technical fault and repair review,
-customer impact, proposed remedies, redress review, a human decision and simulated fulfilment.
-Two fictional BMW vehicle examples demonstrate a supported persistent fault and a disputed
-cause with missing evidence. Neither example represents a BMW customer or internal policy.
+Vehicle review uses the existing server-side AI setup and upload/rate-limit controls.
+Incomplete investigations block final response and redress. Fictional examples cover a
+persistent fault after repair and a case with missing technical evidence. Any impact-redress
+proposal is separate from an agreement unwind requiring approved reconciliation.
 
-- **Interview walkthrough:** fixed fictional evidence summaries and scripted agent hand-offs;
-  no AI call or API key required. Fields are read-only in this mode.
-- **Live review:** editable fictional evidence summaries reviewed through the existing
-  OpenAI Agents SDK / server-side API-key setup. Actual tool calls are returned separately
-  from the AI-generated findings. Existing demo rate limits apply.
-- Materially incomplete investigations block redress and final-response drafting.
-- Human decisions require a rationale, and editing the case or rationale invalidates approval.
-- Downloads contain a JSON review record. Approval and fulfilment are browser-session
-  demonstrations only; no payment, communication or agreement settlement is executed.
-- The illustrative £655 impact proposal excludes any agreement unwind, use deduction,
-  deposit refund or interest. Finance settlement needs separate approved reconciliation.
-
-Verification (from the repository directory, with dependencies installed):
-
-```text
-python -m unittest test_vehicle_quality -v
-node test_vehicle_frontend.cjs
-node test_complaint_frontend.cjs
-```
-
-The Python tests isolate the added HTTP routes from unrelated document libraries and
-mock the AI runner. Live model output still requires a configured deployment smoke test.
+Verification: `python -m unittest test_vehicle_quality -v`,
+`node test_vehicle_frontend.cjs` and `node test_complaint_frontend.cjs`.
+Tests mock model calls; a real model run still needs deployment verification.
 
 ---
 
