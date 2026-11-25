@@ -28,6 +28,37 @@ from vehicle_quality_workflow import VehicleQualityInput, run_vehicle_review
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
 
 
+@app.post("/api/bifd/run")
+async def bifd_run(request: Request):
+    # Fail closed unless the portfolio owner explicitly configures access.
+    import hmac
+    from bifd_workflow import BiFDInput, validate_input, run_bifd
+    password = os.getenv("BIFD_DEMO_PASSWORD")
+    supplied = request.headers.get("x-bifd-access", "")
+    if not password or len(password) < 16:
+        raise HTTPException(503, "BiFD live review is not enabled.")
+    if not hmac.compare_digest(password.encode(), supplied.encode()):
+        raise HTTPException(403, "BiFD access denied.")
+    _check_rate_limit(request)
+    _require_api_key()
+    body = bytearray()
+    async for chunk in request.stream():
+        body.extend(chunk)
+        if len(body) > 180000:
+            raise HTTPException(413, "Evidence payload too large.")
+    try:
+        case = BiFDInput.model_validate_json(body)
+        validate_input(case)
+    except ValueError:
+        raise HTTPException(400, "Invalid fictional evidence or possible identifier. Check confirmation, length and content.") from None
+    try:
+        result = await run_bifd(case)
+    except Exception:
+        raise HTTPException(502, "BiFD review could not complete. No result was approved.") from None
+    from fastapi.responses import JSONResponse
+    return JSONResponse(result.model_dump(), headers={"Cache-Control": "no-store"})
+
+
 @app.get("/bifd", response_class=HTMLResponse)
 async def bifd_page():
     return HTMLResponse(Path(__file__).with_name("bifd.html").read_text(encoding="utf-8"), headers={"Cache-Control": "no-store"})
