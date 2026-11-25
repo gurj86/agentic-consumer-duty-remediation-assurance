@@ -1,3 +1,4 @@
+import asyncio
 import csv
 import io
 import os
@@ -26,10 +27,15 @@ from vehicle_quality_workflow import VehicleQualityInput, run_vehicle_review
 
 
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
+_bifd_usage = deque()
+_bifd_active = 0
+_bifd_stats = {"started": 0, "completed": 0, "failed": 0}
+
 
 
 @app.post("/api/bifd/run")
 async def bifd_run(request: Request):
+    global _bifd_active
     # Fail closed unless the portfolio owner explicitly configures access.
     import hmac
     from bifd_workflow import BiFDInput, validate_input, run_bifd
@@ -51,10 +57,22 @@ async def bifd_run(request: Request):
         validate_input(case)
     except ValueError:
         raise HTTPException(400, "Invalid fictional evidence or possible identifier. Check confirmation, length and content.") from None
+    now = time.monotonic()
+    while _bifd_usage and now - _bifd_usage[0] >= 86400:
+        _bifd_usage.popleft()
+    if len(_bifd_usage) >= 20 or _bifd_active >= 1:
+        raise HTTPException(429, "BiFD daily or concurrent review limit reached.")
+    _bifd_usage.append(now)
+    _bifd_active += 1
+    _bifd_stats["started"] += 1
     try:
-        result = await run_bifd(case)
+        result = await asyncio.wait_for(run_bifd(case), timeout=150)
+        _bifd_stats["completed"] += 1
     except Exception:
+        _bifd_stats["failed"] += 1
         raise HTTPException(502, "BiFD review could not complete. No result was approved.") from None
+    finally:
+        _bifd_active -= 1
     from fastapi.responses import JSONResponse
     return JSONResponse(result.model_dump(), headers={"Cache-Control": "no-store"})
 
