@@ -1,0 +1,21 @@
+name: BiFD offline checks
+on:
+  push:
+    branches: [bifd-outcomes-testing]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python -m compileall -q app.py bifd_workflow.py test_bifd.py
+      - run: python -m unittest test_bifd -v
+      - run: python -c "from app import app; assert any(r.path == '/bifd' for r in app.routes); assert any(r.path == '/api/bifd/run' for r in app.routes)"
