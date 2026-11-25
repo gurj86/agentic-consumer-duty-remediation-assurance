@@ -28,6 +28,12 @@ from vehicle_quality_workflow import VehicleQualityInput, run_vehicle_review
 app = FastAPI(title="Agentic Financial Services Assurance Portfolio")
 
 
+@app.get("/bifd", response_class=HTMLResponse)
+async def bifd_page():
+    return HTMLResponse(Path(__file__).with_name("bifd.html").read_text(encoding="utf-8"), headers={"Cache-Control": "no-store"})
+
+
+
 @app.get("/vehicle-quality", response_class=HTMLResponse)
 async def vehicle_quality_page():
     return Path(__file__).with_name("vehicle_quality.html").read_text(encoding="utf-8")
