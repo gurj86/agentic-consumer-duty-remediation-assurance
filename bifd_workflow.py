@@ -134,7 +134,8 @@ def overall(findings):
 
 async def run_bifd(case):
     sources=validate_input(case)
-    model=os.getenv("BIFD_MODEL","gpt-5-mini")
+    from agent_workflow import MODEL as PORTFOLIO_MODEL
+    model=os.getenv("BIFD_MODEL") or PORTFOLIO_MODEL
     config=RunConfig(tracing_disabled=True)
     settings=ModelSettings(max_tokens=3500)
     logger=logging.getLogger('uvicorn.error')
