@@ -25,7 +25,7 @@ Missing evidence is Further review, not proof of failure. Not applicable require
 Pass needs positive evidence. Fail needs evidence of a specific shortcoming.
 Separate actual harm from potential harm and unknown outcomes; never presume causation.
 For every Pass or Fail cite exact short verbatim excerpts and exact source keys.
-No compensation or customer decisions. All findings provisional and human-led.
+Assess each question on its own merits. An affordability failure alone does not establish poor empathy, missed vulnerability, or inaccurate records. Distinguish absence of evidence from evidence of absence. For Q05 assess affordability and sustainability separately from follow-up documentation. For Q11 distinguish observed communication and empathy from affordability. For Q14 assess material contradictions in rationale as well as agreement recorded. No compensation or customer decisions. All findings provisional and human-led.
 """
 class CaseNotes(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -98,8 +98,9 @@ class QAResult(BaseModel):
     governance: Governance
     agents_consulted: list[str]
     references: dict[str,str]
+    original_challenged_findings: list[Finding] = Field(default_factory=list)
     human_review_required: bool = True
-    workflow_version: str = "bifd-1.1"
+    workflow_version: str = "bifd-1.2"
     grounding_version: str = "2026-11-draft"
 
 SPECIALISTS = [
@@ -167,16 +168,27 @@ async def run_bifd(case):
             if not job.done():job.cancel()
         await asyncio.gather(*jobs,return_exceptions=True)
     findings.sort(key=lambda f:f.question_id)
-    summary=await invoke("Lead QA","Summarise validated findings, distinguish actual and potential harm, and draft constructive feedback. Do not override statuses or introduce new evidence. State actual harm not established if evidence is insufficient.",Summary,evidence+"\nValidated findings:\n"+json.dumps([f.model_dump() for f in findings]))
-    audit=await invoke("Independent governance","Challenge unsupported decisions, contradictory evidence, applicability and harm inference. Review the draft summary as well as the questions. Set summary_supported false if ANY summary claim is unsupported, including harm or causation. Return affected question IDs; do not replace facts.",Governance,evidence+"\nFindings:\n"+json.dumps([f.model_dump() for f in findings])+"\nDraft summary:\n"+summary.model_dump_json())
+    summary=await invoke("Lead QA","Summarise provisional findings whose excerpts were mechanically matched to supplied notes, never call these independently validated or approved, distinguish actual and potential harm, and draft constructive feedback. Do not override statuses or introduce new evidence. State actual harm not established if evidence is insufficient.",Summary,evidence+"\nProvisional findings with excerpt checks:\n"+json.dumps([f.model_dump() for f in findings]))
+    audit=await invoke("Independent governance","Challenge unsupported decisions, contradictory evidence, applicability and harm inference. Review the draft summary as well as the questions. Set summary_supported false if ANY summary claim is unsupported, including harm or causation. Return affected question IDs only when the specific status or rationale is unsupported; distinguish wording concerns from substantive errors. Do not challenge a finding solely because a different question has a gap. Do not replace facts.",Governance,evidence+"\nFindings:\n"+json.dumps([f.model_dump() for f in findings])+"\nDraft summary:\n"+summary.model_dump_json())
     challenged=set(audit.challenged_questions)
     invalid_challenge=bool(challenged-set(QUESTIONS))
     if invalid_challenge:
         audit.concerns.append("Governance output contained unknown question identifiers; human verification required.")
+    original_challenged=[f for f in findings if f.question_id in challenged or invalid_challenge]
     findings=[missing(f.question_id,"Governance challenge requires human verification.") if f.question_id in challenged or invalid_challenge else f for f in findings]
     if challenged or not audit.summary_supported:
-        summary=Summary(rationale="Draft summary withheld following governance challenge. Review individual question findings.",actual_harm="Not established by this assessment; human verification required.",potential_harm="Human reviewer to assess from the supplied evidence.",feedback="Draft feedback withheld pending human review.")
+        # Rebuild a conservative summary from remaining unchallenged, excerpt-checked findings.
+        # No additional model request and no reuse of the disputed draft.
+        supported=[f for f in findings if f.status=="Fail"]
+        gaps=[f.question_id for f in findings if f.status=="Further review"]
+        reasons="; ".join(f.question_id+" "+QUESTIONS[f.question_id]+": "+f.rationale for f in supported[:3])
+        actions="; ".join(f.question_id+": "+f.reviewer_action for f in supported[:3])
+        summary=Summary(
+            rationale=("Remaining provisional concerns: "+reasons if reasons else "No unchallenged Fail findings remain.")+(" Further review: "+", ".join(gaps)+"." if gaps else ""),
+            actual_harm="Human verification required; disputed summary not reused.",
+            potential_harm="Review the remaining provisional concerns for foreseeable harm; no additional harm conclusion inferred.",
+            feedback=("Draft based on remaining provisional findings: "+actions if actions else "Review unresolved questions and obtain supporting evidence before finalising feedback."))
     recommendation=overall(findings)
     if (audit.concerns or not audit.summary_supported) and recommendation=="Pass":
         recommendation="Further review"
-    return QAResult(recommendation=recommendation,findings=findings,summary=summary,governance=audit,agents_consulted=consulted,references=REFERENCES)
+    return QAResult(recommendation=recommendation,findings=findings,summary=summary,governance=audit,agents_consulted=consulted,references=REFERENCES,original_challenged_findings=original_challenged)

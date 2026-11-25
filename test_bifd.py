@@ -51,7 +51,7 @@ class Controls(unittest.TestCase):
         self.assertEqual(validate_input(c),{"CALL-1.notes":"Fictional call"})
 
 class Workflow(unittest.IsolatedAsyncioTestCase):
-    async def test_governance_withholds_summary(self):
+    async def test_governance_rebuilds_summary(self):
         outputs=[SpecialistResult(findings=[finding(q) for q in ids]) for _,ids in SPECIALISTS]
         outputs += [Summary(rationale="Draft",actual_harm="Unsupported claim",potential_harm="Unknown",feedback="Draft"),
                     Governance(concerns=["Unsupported harm"],challenged_questions=["Q05"],summary_supported=False)]
@@ -60,7 +60,18 @@ class Workflow(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(runner.await_count,8)
         self.assertEqual(result.recommendation,"Further review")
         self.assertEqual(len(result.findings),20)
-        self.assertIn("withheld",result.summary.feedback.lower())
+        self.assertIn("unresolved",result.summary.feedback.lower())
+        self.assertEqual([f.question_id for f in result.original_challenged_findings],["Q05"])
+        self.assertEqual(result.original_challenged_findings[0].status,"Pass")
+        self.assertNotIn("Unsupported claim",result.summary.actual_harm)
+    async def test_unchallenged_failure_retained(self):
+        outputs=[SpecialistResult(findings=[finding(q,"Fail" if q=="Q04" else "Pass") for q in ids]) for _,ids in SPECIALISTS]
+        outputs += [Summary(rationale="Draft",actual_harm="Unsupported claim",potential_harm="Unknown",feedback="Draft"),
+                    Governance(concerns=["Unsupported harm"],challenged_questions=["Q05"],summary_supported=False)]
+        with patch("bifd_workflow.Runner.run",new=AsyncMock(side_effect=[SimpleNamespace(final_output=x) for x in outputs])):
+            result=await run_bifd(case())
+        self.assertEqual(result.recommendation,"Fail")
+        self.assertIn("Q04",result.summary.feedback)
         self.assertNotIn("Unsupported claim",result.summary.actual_harm)
     async def test_model_failure_stops_review(self):
         with patch("bifd_workflow.Runner.run",new=AsyncMock(side_effect=RuntimeError("simulated outage"))):
