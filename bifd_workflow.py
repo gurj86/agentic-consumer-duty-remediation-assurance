@@ -4,7 +4,7 @@ import os
 import re
 from typing import Literal
 from agents import Agent, Runner, RunConfig, ModelSettings
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from pydantic import BaseModel, Field, ConfigDict
 
 QUESTIONS = {
 "Q01":"Identify financial difficulty","Q02":"Establish customer circumstances","Q03":"Appropriate questioning","Q04":"Sufficient affordability evidence","Q05":"Sustainable arrangement","Q06":"Alternative forbearance considered","Q07":"Suitable forbearance","Q08":"Identify vulnerability","Q09":"Explore vulnerability","Q10":"Additional support","Q11":"Fair and empathetic treatment","Q12":"Clear explanation of arrangements and consequences","Q13":"Debt advice or signposting considered","Q14":"Call and system note consistency","Q15":"Evidence-based decision","Q16":"Commitments completed","Q17":"Follow-up arrangements","Q18":"Foreseeable harm considered","Q19":"Absence of evidenced actual detriment attributable to handling","Q20":"Fair overall outcome"}
@@ -88,6 +88,7 @@ class Summary(BaseModel):
 class Governance(BaseModel):
     concerns: list[str]
     challenged_questions: list[str]
+    summary_supported: bool
 class QAResult(BaseModel):
     recommendation: Literal["Pass","Fail","Further review"]
     findings: list[Finding]
@@ -96,6 +97,8 @@ class QAResult(BaseModel):
     agents_consulted: list[str]
     references: dict[str,str]
     human_review_required: bool = True
+    workflow_version: str = "bifd-1.1"
+    grounding_version: str = "2026-11-draft"
 
 SPECIALISTS = [
 ("Investigation",["Q01","Q02","Q03","Q15"]),
@@ -116,10 +119,13 @@ def validate_findings(raw, ids, sources):
         valid=all(e.source in sources and bool(e.excerpt.strip()) and e.excerpt in sources[e.source] for e in f.evidence)
         if not valid or (f.status in {"Pass","Fail"} and not f.evidence):
             result.append(missing(q,"Evidence citation could not be verified."));continue
+        if not f.rationale.strip() or (f.status=="Not applicable" and not f.reviewer_action.strip()):
+            result.append(missing(q,"Assessment rationale or applicability justification incomplete."));continue
         result.append(f)
     return result
 
 def overall(findings):
+    if len(findings)!=len(QUESTIONS) or {f.question_id for f in findings}!=set(QUESTIONS):return "Further review"
     if any(f.status=="Fail" for f in findings):return "Fail"
     if any(f.status=="Further review" for f in findings) or not any(f.status=="Pass" for f in findings):return "Further review"
     return "Pass"
@@ -140,9 +146,17 @@ async def run_bifd(case):
         tasks=json.dumps({q:QUESTIONS[q] for q in ids})
         output=await invoke(name,"Assess exactly these assigned QA questions: "+tasks,SpecialistResult,evidence)
         findings.extend(validate_findings(output.findings,ids,sources))
-    audit=await invoke("Independent governance","Challenge unsupported decisions, contradictory evidence, applicability and harm inference. Return affected question IDs; do not replace facts.",Governance,evidence+"\nFindings:\n"+json.dumps([f.model_dump() for f in findings]))
-    challenged=set(audit.challenged_questions)
-    findings=[missing(f.question_id,"Governance challenge requires human verification.") if f.question_id in challenged else f for f in findings]
     findings.sort(key=lambda f:f.question_id)
-    summary=await invoke("Lead QA","Summarise validated findings, clearly distinguish actual and potential harm, and draft constructive feedback. Do not override question statuses. Do not introduce new evidence.",Summary,evidence+"\nValidated findings:\n"+json.dumps([f.model_dump() for f in findings]))
-    return QAResult(recommendation=overall(findings),findings=findings,summary=summary,governance=audit,agents_consulted=consulted,references=REFERENCES)
+    summary=await invoke("Lead QA","Summarise validated findings, distinguish actual and potential harm, and draft constructive feedback. Do not override statuses or introduce new evidence. State actual harm not established if evidence is insufficient.",Summary,evidence+"\nValidated findings:\n"+json.dumps([f.model_dump() for f in findings]))
+    audit=await invoke("Independent governance","Challenge unsupported decisions, contradictory evidence, applicability and harm inference. Review the draft summary as well as the questions. Set summary_supported false if ANY summary claim is unsupported, including harm or causation. Return affected question IDs; do not replace facts.",Governance,evidence+"\nFindings:\n"+json.dumps([f.model_dump() for f in findings])+"\nDraft summary:\n"+summary.model_dump_json())
+    challenged=set(audit.challenged_questions)
+    invalid_challenge=bool(challenged-set(QUESTIONS))
+    if invalid_challenge:
+        audit.concerns.append("Governance output contained unknown question identifiers; human verification required.")
+    findings=[missing(f.question_id,"Governance challenge requires human verification.") if f.question_id in challenged or invalid_challenge else f for f in findings]
+    if challenged or not audit.summary_supported:
+        summary=Summary(rationale="Draft summary withheld following governance challenge. Review individual question findings.",actual_harm="Not established by this assessment; human verification required.",potential_harm="Human reviewer to assess from the supplied evidence.",feedback="Draft feedback withheld pending human review.")
+    recommendation=overall(findings)
+    if (audit.concerns or not audit.summary_supported) and recommendation=="Pass":
+        recommendation="Further review"
+    return QAResult(recommendation=recommendation,findings=findings,summary=summary,governance=audit,agents_consulted=consulted,references=REFERENCES)
