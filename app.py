@@ -36,15 +36,7 @@ _bifd_stats = {"started": 0, "completed": 0, "failed": 0}
 @app.post("/api/bifd/run")
 async def bifd_run(request: Request):
     global _bifd_active
-    # Fail closed unless the portfolio owner explicitly configures access.
-    import hmac
     from bifd_workflow import BiFDInput, validate_input, run_bifd
-    password = os.getenv("BIFD_DEMO_PASSWORD")
-    supplied = request.headers.get("x-bifd-access", "")
-    if not password or len(password) < 16:
-        raise HTTPException(503, "BiFD live review is not enabled.")
-    if not hmac.compare_digest(password.encode(), supplied.encode()):
-        raise HTTPException(403, "BiFD access denied.")
     _check_rate_limit(request)
     _require_api_key()
     body = bytearray()
@@ -60,7 +52,7 @@ async def bifd_run(request: Request):
     now = time.monotonic()
     while _bifd_usage and now - _bifd_usage[0] >= 86400:
         _bifd_usage.popleft()
-    if len(_bifd_usage) >= 20 or _bifd_active >= 1:
+    if len(_bifd_usage) >= 5 or _bifd_active >= 1:
         raise HTTPException(429, "BiFD daily or concurrent review limit reached.")
     _bifd_usage.append(now)
     _bifd_active += 1
