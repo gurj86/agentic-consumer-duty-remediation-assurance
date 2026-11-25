@@ -1,4 +1,6 @@
 """Synthetic BiFD QA workflow. No customer actions or persistent case storage."""
+import asyncio
+import logging
 import json
 import os
 import re
@@ -135,17 +137,34 @@ async def run_bifd(case):
     model=os.getenv("BIFD_MODEL","gpt-5-mini")
     config=RunConfig(tracing_disabled=True)
     settings=ModelSettings(max_tokens=3500)
+    logger=logging.getLogger('uvicorn.error')
     evidence=json.dumps({"agreement":case.agreement,"sources":sources},ensure_ascii=False)
     findings=[]; consulted=[]
     async def invoke(name,instructions,output,prompt):
         agent=Agent(name=name,model=model,instructions=BOUNDARY+instructions,output_type=output,model_settings=settings)
-        run=await Runner.run(agent,prompt,max_turns=1,run_config=config)
+        logger.info("BiFD stage started: %s", name)
+        try:
+            run=await Runner.run(agent,prompt,max_turns=1,run_config=config)
+        except Exception as exc:
+            status=getattr(exc,"status_code",None)
+            logger.warning("BiFD stage failed: %s; error_type=%s; HTTP_status=%s",name,type(exc).__name__,status if isinstance(status,int) else "unknown")
+            raise
         consulted.append(name)
+        logger.info("BiFD stage completed: %s",name)
         return run.final_output
-    for name,ids in SPECIALISTS:
+    async def specialist(name,ids):
         tasks=json.dumps({q:QUESTIONS[q] for q in ids})
         output=await invoke(name,"Assess exactly these assigned QA questions: "+tasks,SpecialistResult,evidence)
-        findings.extend(validate_findings(output.findings,ids,sources))
+        return validate_findings(output.findings,ids,sources)
+    # Run independent specialists concurrently to reduce overall latency.
+    jobs=[asyncio.create_task(specialist(name,ids)) for name,ids in SPECIALISTS]
+    try:
+        for batch in await asyncio.gather(*jobs):
+            findings.extend(batch)
+    finally:
+        for job in jobs:
+            if not job.done():job.cancel()
+        await asyncio.gather(*jobs,return_exceptions=True)
     findings.sort(key=lambda f:f.question_id)
     summary=await invoke("Lead QA","Summarise validated findings, distinguish actual and potential harm, and draft constructive feedback. Do not override statuses or introduce new evidence. State actual harm not established if evidence is insufficient.",Summary,evidence+"\nValidated findings:\n"+json.dumps([f.model_dump() for f in findings]))
     audit=await invoke("Independent governance","Challenge unsupported decisions, contradictory evidence, applicability and harm inference. Review the draft summary as well as the questions. Set summary_supported false if ANY summary claim is unsupported, including harm or causation. Return affected question IDs; do not replace facts.",Governance,evidence+"\nFindings:\n"+json.dumps([f.model_dump() for f in findings])+"\nDraft summary:\n"+summary.model_dump_json())
